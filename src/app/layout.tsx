@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { AuthProvider } from '@/context/AuthContext';
-import Navbar from '@/components/Navbar';
+import { Providers } from './providers';
+import TopNavbar from '@/components/TopNavbar';
 
 export const metadata: Metadata = {
   title: 'SocialEvents - Discover, Create & Join Events',
@@ -16,20 +16,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col font-sans antialiased">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
+        <Providers>
+          <TopNavbar />
+          <main className="flex-1 pt-16">{children}</main>
           <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 py-8 text-center text-xs text-zinc-500">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p>© 2026 SocialEvents System. Built with Next.js, Node.js & MongoDB.</p>
+            <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p>© 2026 SocialEvents. Powered by Better Auth & MongoDB.</p>
               <div className="flex gap-6">
-                <a href="https://mysocial-omega.vercel.app/health" target="_blank" rel="noreferrer" className="hover:text-indigo-600 transition-colors">
-                  Backend Health Status
+                <a
+                  href="https://mysocial-omega.vercel.app/health"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-indigo-600 transition-colors"
+                >
+                  Backend Status
                 </a>
               </div>
             </div>
           </footer>
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );
