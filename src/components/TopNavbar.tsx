@@ -2,14 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { signOut, useSession } from '@/lib/auth-client';
 import { Calendar, Plus } from '@gravity-ui/icons';
 import { Sparkles } from 'lucide-react';
 
 export default function TopNavbar() {
   const { data: session, isPending } = useSession();
-  const pathname = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -50,11 +48,7 @@ export default function TopNavbar() {
           <nav className="hidden items-center gap-2 md:flex">
             <Link
               href="/events"
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                pathname === '/events'
-                  ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/70 dark:hover:bg-zinc-800/70 hover:text-zinc-900 dark:hover:text-zinc-100'
-              }`}
+              className="rounded-full px-4 py-1.5 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/70 dark:hover:bg-zinc-800/70 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all"
             >
               Events
             </Link>

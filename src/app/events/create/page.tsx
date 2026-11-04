@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-const CATEGORIES = [
+const CATEGORIES: Array<{ id: Event['category']; label: string; icon: string }> = [
   { id: 'tech', label: 'Tech', icon: '💻' },
   { id: 'social', label: 'Social', icon: '🎉' },
   { id: 'sports', label: 'Sports', icon: '⚽' },
