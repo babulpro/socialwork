@@ -215,7 +215,17 @@ function EventDetailContent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Column (Content) */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-8 rounded-3xl soft-shadow space-y-6">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-8 rounded-3xl soft-shadow space-y-6 overflow-hidden">
+            {event.coverImage && (
+              <div className="w-full h-64 sm:h-80 -mt-6 sm:-mt-8 -mx-6 sm:-mx-8 w-[calc(100%+3rem)] sm:w-[calc(100%+4rem)] mb-6 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                <img
+                  src={event.coverImage}
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
             <div className="flex items-center gap-2.5">
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70">
                 {event.category}

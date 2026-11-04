@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/lib/auth-client';
 import { apiRequest } from '@/lib/api';
@@ -16,6 +16,10 @@ import {
   ArrowLeft,
   Clock,
   Eye,
+  Upload,
+  Image as ImageIcon,
+  X,
+  Link as LinkIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -35,6 +39,8 @@ export default function CreateEventPage() {
   const { data: session, isPending: isLoading } = useSession();
   const user = session?.user;
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
@@ -43,6 +49,12 @@ export default function CreateEventPage() {
   const [category, setCategory] = useState<Event['category']>('tech');
   const [maxAttendees, setMaxAttendees] = useState<number | ''>('');
   const [isPublic, setIsPublic] = useState(true);
+
+  // Cover image states
+  const [coverImage, setCoverImage] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageTab, setImageTab] = useState<'upload' | 'url'>('upload');
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +73,56 @@ export default function CreateEventPage() {
       </div>
     );
   }
+
+  // Handle file upload to Cloudinary via Next.js API
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please select a valid image file (PNG, JPG, WEBP)');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Image size must be under 10MB');
+      return;
+    }
+
+    setUploadError(null);
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to upload image');
+      }
+
+      setCoverImage(data.url);
+    } catch (err: any) {
+      console.error('Upload failed:', err);
+      setUploadError(err.message || 'Upload failed. Ensure CLOUDINARY_URL is configured.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setCoverImage('');
+    setUploadError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +146,7 @@ export default function CreateEventPage() {
         category,
         maxAttendees: maxAttendees === '' ? 0 : Number(maxAttendees),
         isPublic,
+        coverImage,
       };
 
       const data = await apiRequest<{ success: boolean; event: Event }>('/events', {
@@ -115,6 +178,7 @@ export default function CreateEventPage() {
     maxAttendees: maxAttendees === '' ? 0 : Number(maxAttendees),
     attendees: [],
     attendeeCount: 1,
+    coverImage,
     status: 'upcoming',
     isPublic: true,
     organizer: {
@@ -143,7 +207,7 @@ export default function CreateEventPage() {
           Host a New Event
         </h1>
         <p className="mt-1 text-sm text-zinc-500">
-          Publish your gathering to the community and manage attendee RSVPs in real time.
+          Publish your gathering to the community, upload a cover photo, and manage attendee RSVPs.
         </p>
       </div>
 
@@ -171,6 +235,122 @@ export default function CreateEventPage() {
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
             />
+          </div>
+
+          {/* Cover Image Upload (Cloudinary) */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Cover Image (Cloudinary)
+              </label>
+              <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-xl text-[11px] font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setImageTab('upload')}
+                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                    imageTab === 'upload'
+                      ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                      : 'text-zinc-500'
+                  }`}
+                >
+                  Upload File
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImageTab('url')}
+                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                    imageTab === 'url'
+                      ? 'bg-white dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                      : 'text-zinc-500'
+                  }`}
+                >
+                  Image URL
+                </button>
+              </div>
+            </div>
+
+            {imageTab === 'upload' ? (
+              <div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+
+                {coverImage ? (
+                  <div className="relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 h-44 group">
+                    <img
+                      src={coverImage}
+                      alt="Cover Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-1.5 rounded-xl bg-white text-zinc-900 text-xs font-semibold shadow-md hover:bg-zinc-100 cursor-pointer"
+                      >
+                        Change Photo
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-semibold shadow-md hover:bg-rose-700 cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all hover:border-indigo-500 hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 ${
+                      uploadingImage
+                        ? 'border-indigo-500 bg-indigo-50/10'
+                        : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/40'
+                    }`}
+                  >
+                    {uploadingImage ? (
+                      <div className="space-y-2 py-3">
+                        <Loader2 className="w-7 h-7 animate-spin text-indigo-600 mx-auto" />
+                        <p className="text-xs font-semibold text-indigo-600">Uploading to Cloudinary...</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 py-2">
+                        <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 mx-auto flex items-center justify-center">
+                          <Upload className="w-5 h-5" />
+                        </div>
+                        <p className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                          Click to upload cover image
+                        </p>
+                        <p className="text-[11px] text-zinc-400">
+                          PNG, JPG, or WEBP up to 10MB (Cloudinary optimized)
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="relative">
+                <LinkIcon className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash.com/... or Cloudinary link"
+                  value={coverImage}
+                  onChange={(e) => setCoverImage(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+            )}
+
+            {uploadError && (
+              <p className="text-xs text-rose-600 dark:text-rose-400 font-medium">
+                {uploadError}
+              </p>
+            )}
           </div>
 
           {/* Category Selector */}
@@ -291,7 +471,7 @@ export default function CreateEventPage() {
           <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || uploadingImage}
               className="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-md shadow-indigo-600/30 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {submitting ? (

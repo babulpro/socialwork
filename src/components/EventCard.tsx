@@ -44,6 +44,17 @@ export default function EventCard({ event }: EventCardProps) {
       {/* Ambient hover glow inside card */}
       <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-indigo-500/5 blur-2xl group-hover:bg-indigo-500/10 transition-colors pointer-events-none" />
 
+      {/* Cover Image if present */}
+      {event.coverImage && (
+        <div className="relative w-[calc(100%+3rem)] h-40 -mx-6 -mt-6 mb-5 overflow-hidden border-b border-zinc-100 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800">
+          <img
+            src={event.coverImage}
+            alt={event.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+      )}
+
       <div>
         {/* Top Header: Category Tag & Calendar Block */}
         <div className="flex items-start justify-between gap-4 mb-5">
