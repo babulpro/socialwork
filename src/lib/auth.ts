@@ -3,13 +3,28 @@ import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { MongoClient } from 'mongodb';
 
 const uri = process.env.MONGODB_URI || '';
-const client = new MongoClient(uri);
-const db = client.db('ass'); // 'ass' is the DB name from the connection string
+
+declare global {
+  // eslint-disable-next-line no-var
+  var _authMongoClient: MongoClient | undefined;
+}
+
+let client: MongoClient;
+if (process.env.NODE_ENV === 'development') {
+  if (!global._authMongoClient) {
+    global._authMongoClient = new MongoClient(uri);
+  }
+  client = global._authMongoClient;
+} else {
+  client = new MongoClient(uri);
+}
+
+const db = client.db('ass');
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
-  database: mongodbAdapter(db),
+  database: mongodbAdapter(db, { client }),
   emailAndPassword: {
     enabled: true,
   },

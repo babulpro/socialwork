@@ -3,15 +3,16 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+import { useSession } from '@/lib/auth-client';
 import { apiRequest } from '@/lib/api';
-import { Event } from '@/types';
+import { Event, EventsResponse } from '@/types';
 import EventCard from '@/components/EventCard';
 import { PlusCircle, Calendar, Users, Loader2, Sparkles, LayoutDashboard } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { data: session, isPending } = useSession();
+  const user = session?.user;
 
   const [activeTab, setActiveTab] = useState<'created' | 'joined'>('created');
   const [createdEvents, setCreatedEvents] = useState<Event[]>([]);
@@ -19,10 +20,10 @@ export default function DashboardPage() {
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/login');
+    if (!isPending && !user) {
+      router.push('/sign-in');
     }
-  }, [user, isLoading, router]);
+  }, [user, isPending, router]);
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -35,10 +36,16 @@ export default function DashboardPage() {
         );
         setCreatedEvents(createdData.events || []);
 
-        // Fetch user profile with populated joined events
-        const profileData = await apiRequest<{ success: boolean; user: any }>('/auth/me');
-        if (profileData?.user?.joinedEvents) {
-          setJoinedEvents(profileData.user.joinedEvents || []);
+        // Also fetch all events and filter for joined events where user is an attendee
+        const allEventsData = await apiRequest<EventsResponse>('/events');
+        if (allEventsData?.events) {
+          const joined = allEventsData.events.filter((e) =>
+            e.attendees?.some((att) => {
+              const attendeeId = typeof att === 'string' ? att : att._id;
+              return attendeeId === user.id || attendeeId === (user as any)._id;
+            })
+          );
+          setJoinedEvents(joined);
         }
       } catch (err) {
         console.error('Failed to load dashboard:', err);
@@ -52,7 +59,7 @@ export default function DashboardPage() {
     }
   }, [user]);
 
-  if (isLoading || !user) {
+  if (isPending || !user) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
@@ -68,13 +75,13 @@ export default function DashboardPage() {
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 rounded-3xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center text-2xl font-extrabold shadow-lg shadow-indigo-500/20">
-            {user.name.charAt(0).toUpperCase()}
+            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               <span>{user.name}</span>
               <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 capitalize border border-indigo-200 dark:border-indigo-800">
-                {user.role}
+                User
               </span>
             </h1>
             <p className="text-sm text-zinc-500">{user.email}</p>
@@ -82,7 +89,7 @@ export default function DashboardPage() {
         </div>
 
         <Link
-          href="/events/create"
+          href="/events/new"
           className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/20 transition-all hover:-translate-y-0.5"
         >
           <PlusCircle className="w-4 h-4" />
@@ -147,7 +154,7 @@ export default function DashboardPage() {
             </p>
             <div className="mt-6">
               <Link
-                href={activeTab === 'created' ? '/events/create' : '/events'}
+                href={activeTab === 'created' ? '/events/new' : '/events'}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
               >
                 {activeTab === 'created' ? (

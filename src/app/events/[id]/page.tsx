@@ -3,7 +3,7 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useSession } from '@/lib/auth-client';
 import { apiRequest } from '@/lib/api';
 import { Event } from '@/types';
 import {
@@ -24,7 +24,8 @@ function EventDetailContent() {
   const router = useRouter();
   const params = useParams();
   const eventId = params?.id as string;
-  const { user } = useAuth();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,19 +74,28 @@ function EventDetailContent() {
     );
   }
 
-  // Check if current logged-in user is the organizer
-  const isOrganizer = user && (event.organizer?._id === user.id || (event.organizer as any) === user.id);
+  // Check if current logged-in user is the organizer (by ID or Email)
+  const isOrganizer =
+    user &&
+    (event.organizer?._id === user.id ||
+      event.organizer?.id === user.id ||
+      event.organizer?.email === user.email ||
+      (event.organizer as any) === user.id);
 
   // Check if current logged-in user is an attendee
   const isAttendee =
     user &&
     Array.isArray(event.attendees) &&
-    event.attendees.some((a) => (typeof a === 'string' ? a === user.id : a._id === user.id || a.id === user.id));
+    event.attendees.some(
+      (a) =>
+        (typeof a === 'string' && (a === user.id || a === user.email)) ||
+        (typeof a === 'object' && (a?._id === user.id || a?.id === user.id || (a as any)?.email === user.email))
+    );
 
   // Handle Join
   const handleJoin = async () => {
     if (!user) {
-      router.push('/login');
+      router.push('/sign-in');
       return;
     }
     setActionLoading(true);
@@ -109,7 +119,7 @@ function EventDetailContent() {
     setError(null);
     setSuccessMsg(null);
     try {
-      await apiRequest(`/events/${eventId}/leave`, { method: 'POST' });
+      await apiRequest(`/events/${eventId}/join`, { method: 'DELETE' });
       setSuccessMsg('You have left the event.');
       await loadEvent();
     } catch (err: any) {
@@ -244,7 +254,7 @@ function EventDetailContent() {
             {Array.isArray(event.attendees) && event.attendees.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
                 {event.attendees.map((attendee: any, idx: number) => {
-                  const attendeeName = typeof attendee === 'string' ? `User ${attendee.slice(-4)}` : attendee.name;
+                  const attendeeName = typeof attendee === 'string' ? `User ${attendee.slice(-4)}` : attendee.name || 'Attendee';
                   return (
                     <div
                       key={idx}
@@ -268,7 +278,6 @@ function EventDetailContent() {
 
         {/* Right 1 Col: Organizer & Join Card */}
         <div className="space-y-6">
-          {/* Join / Action Card */}
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-3xl shadow-sm space-y-4">
             <h3 className="font-bold text-base text-zinc-900 dark:text-white">Join Event</h3>
 
@@ -312,7 +321,6 @@ function EventDetailContent() {
             )}
           </div>
 
-          {/* Organizer Card */}
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-3xl shadow-sm space-y-4">
             <h3 className="font-bold text-xs uppercase tracking-wider text-zinc-400">Organized By</h3>
             <div className="flex items-center gap-3">

@@ -72,7 +72,7 @@ export default function HomePage() {
             </Link>
 
             <Link
-              href="/events/create"
+              href="/events/new"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-750 text-zinc-900 dark:text-zinc-100 font-medium text-sm transition-all hover:-translate-y-0.5 shadow-sm"
             >
               <PlusCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />

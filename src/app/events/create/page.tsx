@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useSession } from '@/lib/auth-client';
 import { apiRequest } from '@/lib/api';
 import { Event } from '@/types';
 import { Calendar, MapPin, Users, Tag, AlertCircle, Loader2, Sparkles, ArrowLeft } from 'lucide-react';
@@ -12,7 +12,8 @@ const CATEGORIES = ['social', 'tech', 'sports', 'education', 'music', 'food', 'a
 
 export default function CreateEventPage() {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { data: session, isPending: isLoading } = useSession();
+  const user = session?.user;
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -26,17 +27,17 @@ export default function CreateEventPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect guest users to login
+  // Redirect guest users to sign-in
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/login');
+      router.push('/sign-in');
     }
   }, [user, isLoading, router]);
 
   if (isLoading || !user) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
       </div>
     );
   }
@@ -104,7 +105,6 @@ export default function CreateEventPage() {
       )}
 
       <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 rounded-3xl shadow-sm space-y-6">
-        {/* Title */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-2">
             Event Title *
@@ -119,7 +119,6 @@ export default function CreateEventPage() {
           />
         </div>
 
-        {/* Category & Max Attendees */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-2">
@@ -159,7 +158,6 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        {/* Date and Time */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-2">
@@ -191,7 +189,6 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        {/* Location */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-2">
             Location or Address *
@@ -209,7 +206,6 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-2">
             Event Description *
@@ -224,7 +220,6 @@ export default function CreateEventPage() {
           />
         </div>
 
-        {/* Public Toggle */}
         <div className="flex items-center gap-3 pt-2">
           <input
             type="checkbox"
@@ -238,7 +233,6 @@ export default function CreateEventPage() {
           </label>
         </div>
 
-        {/* Submit Button */}
         <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
           <button
             type="submit"
