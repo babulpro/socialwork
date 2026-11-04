@@ -7,7 +7,15 @@ import { useSession } from '@/lib/auth-client';
 import { apiRequest } from '@/lib/api';
 import { Event, EventsResponse } from '@/types';
 import EventCard from '@/components/EventCard';
-import { PlusCircle, Calendar, Users, Loader2, Sparkles, LayoutDashboard } from 'lucide-react';
+import {
+  Plus,
+  Calendar,
+  Users,
+  Loader2,
+  Sparkles,
+  LayoutDashboard,
+  CheckCircle2,
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -68,103 +76,125 @@ export default function DashboardPage() {
   }
 
   const displayedEvents = activeTab === 'created' ? createdEvents : joinedEvents;
+  const totalAudience = createdEvents.reduce((acc, curr) => acc + (curr.attendeeCount || 0), 0);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-      {/* Header Profile Bar */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-8 rounded-3xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      {/* Profile Header Bar */}
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-8 rounded-3xl soft-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center text-2xl font-extrabold shadow-lg shadow-indigo-500/20">
+          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-indigo-500/25 flex-shrink-0">
             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-              <span>{user.name}</span>
-              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 capitalize border border-indigo-200 dark:border-indigo-800">
-                User
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                {user.name}
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/80 capitalize">
+                Member
               </span>
-            </h1>
-            <p className="text-sm text-zinc-500">{user.email}</p>
+            </div>
+            <p className="text-sm text-zinc-500 mt-0.5">{user.email}</p>
           </div>
         </div>
 
         <Link
           href="/events/new"
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/20 transition-all hover:-translate-y-0.5"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto cursor-pointer"
         >
-          <PlusCircle className="w-4 h-4" />
+          <Plus className="w-4 h-4" />
           <span>Host New Event</span>
         </Link>
       </div>
 
-      {/* Tabs */}
+      {/* Quick Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 rounded-3xl soft-shadow space-y-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Events Hosted</p>
+          <p className="text-3xl font-black text-zinc-900 dark:text-white">{createdEvents.length}</p>
+          <p className="text-[11px] text-zinc-500 font-medium">Published by you</p>
+        </div>
+
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 rounded-3xl soft-shadow space-y-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Events Joined</p>
+          <p className="text-3xl font-black text-zinc-900 dark:text-white">{joinedEvents.length}</p>
+          <p className="text-[11px] text-zinc-500 font-medium">Confirmed RSVPs</p>
+        </div>
+
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 rounded-3xl soft-shadow space-y-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-zinc-400">Community Reach</p>
+          <p className="text-3xl font-black text-indigo-600 dark:text-indigo-400">{totalAudience}</p>
+          <p className="text-[11px] text-zinc-500 font-medium">Total attendees in your events</p>
+        </div>
+      </div>
+
+      {/* Segmented Tab Switcher */}
       <div className="space-y-6">
-        <div className="flex items-center gap-4 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center gap-2 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3">
           <button
             onClick={() => setActiveTab('created')}
-            className={`pb-4 text-sm font-semibold flex items-center gap-2 transition-all relative ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'created'
-                ? 'text-indigo-600 dark:text-indigo-400'
-                : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
+                ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
             }`}
           >
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-3.5 h-3.5" />
             <span>Events I Created ({createdEvents.length})</span>
-            {activeTab === 'created' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-full" />
-            )}
           </button>
 
           <button
             onClick={() => setActiveTab('joined')}
-            className={`pb-4 text-sm font-semibold flex items-center gap-2 transition-all relative ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'joined'
-                ? 'text-indigo-600 dark:text-indigo-400'
-                : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
+                ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
             }`}
           >
-            <Users className="w-4 h-4" />
+            <Users className="w-3.5 h-3.5" />
             <span>Events I've Joined ({joinedEvents.length})</span>
-            {activeTab === 'joined' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-full" />
-            )}
           </button>
         </div>
 
-        {/* Content */}
+        {/* Content Feed */}
         {fetching ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse border border-zinc-200 dark:border-zinc-800"
+                className="h-72 rounded-3xl bg-zinc-100 dark:bg-zinc-900 animate-pulse border border-zinc-200/70 dark:border-zinc-800/70"
               />
             ))}
           </div>
         ) : displayedEvents.length === 0 ? (
-          <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-8">
-            <LayoutDashboard className="w-10 h-10 text-zinc-400 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-zinc-900 dark:text-white">
-              {activeTab === 'created' ? "You haven't hosted any events yet" : "You haven't joined any events yet"}
-            </h3>
-            <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
-              {activeTab === 'created'
-                ? 'Create your first event today and start connecting with people.'
-                : 'Explore upcoming public events and click "Join" to participate.'}
-            </p>
-            <div className="mt-6">
+          <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-8 space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center mx-auto text-indigo-600 dark:text-indigo-400">
+              <LayoutDashboard className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-white">
+                {activeTab === 'created' ? "You haven't hosted any events yet" : "You haven't joined any events yet"}
+              </h3>
+              <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+                {activeTab === 'created'
+                  ? 'Publish your first gathering today and start connecting with people.'
+                  : 'Explore upcoming public events and click "Join" to reserve your spot.'}
+              </p>
+            </div>
+            <div className="pt-2">
               <Link
                 href={activeTab === 'created' ? '/events/new' : '/events'}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition-colors shadow-sm"
               >
                 {activeTab === 'created' ? (
                   <>
-                    <PlusCircle className="w-4 h-4" />
+                    <Plus className="w-3.5 h-3.5" />
                     <span>Create an Event</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
+                    <Sparkles className="w-3.5 h-3.5" />
                     <span>Explore Events</span>
                   </>
                 )}

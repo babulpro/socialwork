@@ -5,9 +5,30 @@ import Link from 'next/link';
 import { apiRequest } from '@/lib/api';
 import { Event, EventsResponse } from '@/types';
 import EventCard from '@/components/EventCard';
-import { Sparkles, Calendar, PlusCircle, Search, Compass, RefreshCw } from 'lucide-react';
+import {
+  Sparkles,
+  Search,
+  Compass,
+  Plus,
+  RefreshCw,
+  Users,
+  CalendarCheck,
+  Globe2,
+  X,
+  ArrowRight,
+} from 'lucide-react';
 
-const CATEGORIES = ['all', 'social', 'tech', 'sports', 'education', 'music', 'food', 'art', 'other'];
+const CATEGORIES = [
+  { id: 'all', label: 'All Events', icon: '✨' },
+  { id: 'tech', label: 'Tech & Code', icon: '💻' },
+  { id: 'social', label: 'Social & Hangouts', icon: '🎉' },
+  { id: 'sports', label: 'Sports & Fitness', icon: '⚽' },
+  { id: 'education', label: 'Workshops', icon: '📚' },
+  { id: 'music', label: 'Music & Concerts', icon: '🎵' },
+  { id: 'food', label: 'Food & Drinks', icon: '🍕' },
+  { id: 'art', label: 'Art & Design', icon: '🎨' },
+  { id: 'other', label: 'Other', icon: '📌' },
+];
 
 export default function HomePage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -42,30 +63,38 @@ export default function HomePage() {
   );
 
   return (
-    <div className="space-y-16 pb-20">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28 bg-gradient-to-b from-indigo-50/50 via-white to-transparent dark:from-indigo-950/20 dark:via-zinc-950 dark:to-transparent border-b border-zinc-200/60 dark:border-zinc-800/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-100/80 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 text-xs font-semibold uppercase tracking-wider mb-6">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Social Management System</span>
+    <div className="space-y-16 pb-24">
+      {/* Hero Section with Ambient Glows */}
+      <section className="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-32 bg-dot-pattern border-b border-zinc-200/60 dark:border-zinc-800/60">
+        {/* Colorful Glow Orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-indigo-500/20 via-violet-500/15 to-pink-500/10 blur-3xl pointer-events-none rounded-full" />
+        <div className="absolute -top-12 right-10 w-72 h-72 bg-blue-500/10 blur-3xl pointer-events-none rounded-full" />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          {/* Top Pill */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-semibold mb-8 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span>Discover & Host Real-World Meetups</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-zinc-900 dark:text-white max-w-3xl mx-auto leading-tight">
+          {/* Main Headline */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 dark:text-white max-w-4xl mx-auto leading-[1.12]">
             Create, Connect & Experience{' '}
-            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-600 bg-clip-text text-transparent">
               Events Together
             </span>
           </h1>
 
-          <p className="mt-6 text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-            Discover community gatherings, tech conferences, workshops, and social meetups. Host your own event in seconds and invite others to join.
+          {/* Subtitle */}
+          <p className="mt-6 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+            The modern social management hub. Browse community hangouts, tech workshops, sports meetups, or host your own in seconds and gather with people.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          {/* CTA Buttons */}
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm shadow-lg shadow-indigo-600/25 transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Compass className="w-4 h-4" />
               <span>Explore All Events</span>
@@ -73,21 +102,51 @@ export default function HomePage() {
 
             <Link
               href="/events/new"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-750 text-zinc-900 dark:text-zinc-100 font-medium text-sm transition-all hover:-translate-y-0.5 shadow-sm"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-zinc-900 dark:text-zinc-100 font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] soft-shadow"
             >
-              <PlusCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span>Create an Event</span>
+              <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <span>Host an Event</span>
             </Link>
+          </div>
+
+          {/* Stats Bar */}
+          <div className="mt-14 pt-8 border-t border-zinc-200/60 dark:border-zinc-800/60 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="space-y-1">
+              <p className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">100%</p>
+              <p className="text-xs text-zinc-500 font-medium">Free to Join & Host</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">Instant</p>
+              <p className="text-xs text-zinc-500 font-medium">One-Click RSVP</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">Live</p>
+              <p className="text-xs text-zinc-500 font-medium">Real-Time Attendee Sync</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">Active</p>
+              <p className="text-xs text-zinc-500 font-medium">Community Driven</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Main Events Feed */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        {/* Header + Search Bar */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Upcoming Events</h2>
-            <p className="text-sm text-zinc-500">Find what interests you and join with one click</p>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
+                Upcoming Events
+              </h2>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/80">
+                {filteredEvents.length}
+              </span>
+            </div>
+            <p className="text-sm text-zinc-500 mt-1">
+              Find what interests you, meet attendees, and secure your spot
+            </p>
           </div>
 
           {/* Search Input */}
@@ -98,73 +157,99 @@ export default function HomePage() {
               placeholder="Search by title, location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all soft-shadow"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {/* Category Pills Slider */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none pt-1">
           {CATEGORIES.map((cat) => {
-            const isSelected = selectedCategory === cat;
+            const isSelected = selectedCategory === cat.id;
             return (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold capitalize whitespace-nowrap transition-all ${
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isSelected
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                    ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-md scale-[1.02]'
+                    : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-800/80 hover:bg-zinc-100/70 dark:hover:bg-zinc-800/70'
                 }`}
               >
-                {cat}
+                <span>{cat.icon}</span>
+                <span>{cat.label}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Events Grid */}
+        {/* Content Section */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse border border-zinc-200 dark:border-zinc-800"
-              />
+                className="h-72 rounded-3xl bg-zinc-100 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800/70 animate-pulse p-6 space-y-4"
+              >
+                <div className="h-6 w-24 bg-zinc-200 dark:bg-zinc-800 rounded-full" />
+                <div className="h-7 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded-xl" />
+                <div className="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded-md" />
+                <div className="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
+              </div>
             ))}
           </div>
         ) : error ? (
-          <div className="text-center py-16 bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-2xl p-8">
-            <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
+          <div className="rounded-3xl border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 p-8 text-center space-y-4">
+            <p className="text-sm font-semibold text-rose-600 dark:text-rose-400">{error}</p>
             <button
               onClick={fetchEvents}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-rose-200 dark:border-rose-800 text-xs font-semibold text-rose-600 hover:bg-rose-50"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Try Again</span>
+              <span>Retry</span>
             </button>
           </div>
         ) : filteredEvents.length === 0 ? (
-          <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-8">
-            <div className="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 flex items-center justify-center mx-auto mb-4">
-              <Calendar className="w-6 h-6" />
+          <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-8 space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center mx-auto text-indigo-600 dark:text-indigo-400">
+              <Compass className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-zinc-900 dark:text-white">No events found</h3>
-            <p className="mt-1 text-sm text-zinc-500 max-w-sm mx-auto">
-              {searchQuery
-                ? `No events matching "${searchQuery}". Try different keywords.`
-                : 'Be the first one to create an event and invite others!'}
-            </p>
-            <Link
-              href="/events/create"
-              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Create First Event</span>
-            </Link>
+            <div>
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-white">No events found</h3>
+              <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+                {searchQuery
+                  ? `No matches for "${searchQuery}". Try a different keyword or clear your filter.`
+                  : 'There are no events listed in this category yet. Be the first to create one!'}
+              </p>
+            </div>
+            {searchQuery ? (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs font-semibold hover:bg-zinc-200 transition-colors"
+              >
+                Clear Search Filter
+              </button>
+            ) : (
+              <Link
+                href="/events/new"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition-colors shadow-sm"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Create an Event Now</span>
+              </Link>
+            )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
             {filteredEvents.map((event) => (
               <EventCard key={event._id} event={event} />
             ))}

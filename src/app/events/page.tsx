@@ -4,9 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { apiRequest } from '@/lib/api';
 import { Event, EventsResponse } from '@/types';
 import EventCard from '@/components/EventCard';
-import { Search, Filter, Calendar } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, X, Plus, Compass } from 'lucide-react';
+import Link from 'next/link';
 
-const CATEGORIES = ['all', 'social', 'tech', 'sports', 'education', 'music', 'food', 'art', 'other'];
+const CATEGORIES = [
+  'all',
+  'tech',
+  'social',
+  'sports',
+  'education',
+  'music',
+  'food',
+  'art',
+  'other',
+];
 
 export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -42,35 +53,63 @@ export default function EventsPage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      {/* Title */}
-      <div>
-        <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-white">Explore Events</h1>
-        <p className="mt-1 text-sm text-zinc-500">Discover public gatherings and connect with organizers</p>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+      {/* Title & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight">
+              Explore Events
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/80">
+              {filteredEvents.length}
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-zinc-500">
+            Discover community gatherings, RSVP in one click, or host your own.
+          </p>
+        </div>
+
+        <Link
+          href="/events/new"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md shadow-indigo-600/25 transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Host Event</span>
+        </Link>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 rounded-3xl soft-shadow">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
-            placeholder="Search events by title or location..."
+            placeholder="Search events by title, topic, location..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-11 pr-9 py-2.5 text-sm rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50 dark:bg-zinc-950/80 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
           />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
-        {/* Category Dropdown & Sort */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-sm text-zinc-500">
-            <Filter className="w-4 h-4" />
+        {/* Category Filter & Sort Dropdowns */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500">
+            <Filter className="w-3.5 h-3.5" />
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="py-2 px-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="py-2.5 px-3 text-xs font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c} className="capitalize">
@@ -80,14 +119,17 @@ export default function EventsPage() {
             </select>
           </div>
 
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="py-2 px-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="-date">Newest Date First</option>
-            <option value="date">Upcoming First</option>
-          </select>
+          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500">
+            <ArrowUpDown className="w-3.5 h-3.5" />
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="py-2.5 px-3 text-xs font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+            >
+              <option value="-date">Latest Created</option>
+              <option value="date">Upcoming Date</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -97,15 +139,30 @@ export default function EventsPage() {
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse border border-zinc-200 dark:border-zinc-800"
+              className="h-72 rounded-3xl bg-zinc-100 dark:bg-zinc-900 animate-pulse border border-zinc-200/60 dark:border-zinc-800/60"
             />
           ))}
         </div>
       ) : filteredEvents.length === 0 ? (
-        <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-8">
-          <Calendar className="w-10 h-10 text-zinc-400 mx-auto mb-3" />
+        <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-8 space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center mx-auto text-indigo-600 dark:text-indigo-400">
+            <Compass className="w-6 h-6" />
+          </div>
           <h3 className="text-base font-bold text-zinc-900 dark:text-white">No events match your criteria</h3>
-          <p className="text-xs text-zinc-500 mt-1">Try clearing your filters or search keywords.</p>
+          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+            Try adjusting your search query or selecting a different category.
+          </p>
+          {(search || category !== 'all') && (
+            <button
+              onClick={() => {
+                setSearch('');
+                setCategory('all');
+              }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs font-semibold hover:bg-zinc-200 transition-colors cursor-pointer"
+            >
+              Reset Filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

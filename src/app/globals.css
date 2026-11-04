@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #09090b;
   --primary: #4f46e5;
   --primary-foreground: #ffffff;
   --default-100: #f4f4f5;
@@ -24,18 +24,17 @@
   --color-separator: var(--separator);
   --color-danger: var(--danger);
   --color-danger-50: var(--danger-50);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #09090b;
-    --foreground: #ededed;
+    --foreground: #f4f4f5;
     --primary: #6366f1;
     --primary-foreground: #ffffff;
-    --default-100: #27272a;
-    --default-200: #3f3f46;
+    --default-100: #18181b;
+    --default-200: #27272a;
     --default-500: #a1a1aa;
     --separator: #27272a;
     --danger: #f87171;
@@ -44,7 +43,79 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  letter-spacing: -0.011em;
+}
+
+/* Ambient dotted background pattern */
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(100, 116, 139, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(228, 228, 231, 0.7);
+}
+
+.dark .glass-panel {
+  background: rgba(18, 18, 23, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(39, 39, 42, 0.7);
+}
+
+/* Layered soft depth shadow */
+.soft-shadow {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03), 0 12px 24px -4px rgba(0, 0, 0, 0.03);
+}
+
+.soft-shadow-lg {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 12px 28px -4px rgba(0, 0, 0, 0.07), 0 20px 48px -8px rgba(79, 70, 229, 0.1);
+}
+
+/* Custom smooth scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+/* Shimmer pulse effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-badge {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0.22) 50%, rgba(99, 102, 241, 0.08) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
 }

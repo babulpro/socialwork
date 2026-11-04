@@ -1,32 +1,28 @@
 import React from 'react';
 import Link from 'next/link';
 import { Event } from '@/types';
-import { Calendar, MapPin, Users, ArrowRight } from 'lucide-react';
+import { MapPin, Users, ArrowUpRight, Clock } from 'lucide-react';
 
 interface EventCardProps {
   event: Event;
 }
 
-const categoryColors: Record<string, string> = {
-  social: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-  tech: 'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border-purple-200 dark:border-purple-800',
-  sports: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-  education: 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-  music: 'bg-pink-50 text-pink-700 dark:bg-pink-950/50 dark:text-pink-300 border-pink-200 dark:border-pink-800',
-  food: 'bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 border-orange-200 dark:border-orange-800',
-  art: 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border-rose-200 dark:border-rose-800',
-  other: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
+const categoryStyles: Record<string, { bg: string; text: string; dot: string; border: string }> = {
+  social: { bg: 'bg-blue-50 dark:bg-blue-950/40', text: 'text-blue-700 dark:text-blue-300', dot: 'bg-blue-500', border: 'border-blue-200 dark:border-blue-800' },
+  tech: { bg: 'bg-indigo-50 dark:bg-indigo-950/40', text: 'text-indigo-700 dark:text-indigo-300', dot: 'bg-indigo-500', border: 'border-indigo-200 dark:border-indigo-800' },
+  sports: { bg: 'bg-emerald-50 dark:bg-emerald-950/40', text: 'text-emerald-700 dark:text-emerald-300', dot: 'bg-emerald-500', border: 'border-emerald-200 dark:border-emerald-800' },
+  education: { bg: 'bg-amber-50 dark:bg-amber-950/40', text: 'text-amber-700 dark:text-amber-300', dot: 'bg-amber-500', border: 'border-amber-200 dark:border-amber-800' },
+  music: { bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/40', text: 'text-fuchsia-700 dark:text-fuchsia-300', dot: 'bg-fuchsia-500', border: 'border-fuchsia-200 dark:border-fuchsia-800' },
+  food: { bg: 'bg-orange-50 dark:bg-orange-950/40', text: 'text-orange-700 dark:text-orange-300', dot: 'bg-orange-500', border: 'border-orange-200 dark:border-orange-800' },
+  art: { bg: 'bg-rose-50 dark:bg-rose-950/40', text: 'text-rose-700 dark:text-rose-300', dot: 'bg-rose-500', border: 'border-rose-200 dark:border-rose-800' },
+  other: { bg: 'bg-zinc-100 dark:bg-zinc-800/60', text: 'text-zinc-700 dark:text-zinc-300', dot: 'bg-zinc-500', border: 'border-zinc-200 dark:border-zinc-700' },
 };
 
 export default function EventCard({ event }: EventCardProps) {
   const eventDate = new Date(event.date);
-  const formattedDate = eventDate.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-  const formattedTime = eventDate.toLocaleTimeString('en-US', {
+  const monthStr = eventDate.toLocaleDateString('en-US', { month: 'short' });
+  const dayStr = eventDate.getDate();
+  const timeStr = eventDate.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
   });
@@ -38,68 +34,102 @@ export default function EventCard({ event }: EventCardProps) {
       ? event.attendees.length
       : 0;
 
-  const colorClass = categoryColors[event.category] || categoryColors.other;
+  const spotsLeft = event.maxAttendees > 0 ? Math.max(0, event.maxAttendees - attendeeCount) : null;
+  const isFull = event.maxAttendees > 0 && spotsLeft === 0;
+
+  const style = categoryStyles[event.category] || categoryStyles.other;
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm hover:shadow-xl hover:border-indigo-200 dark:hover:border-indigo-900/50 transition-all duration-300 hover:-translate-y-1">
+    <div className="group relative flex flex-col justify-between rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 soft-shadow hover:soft-shadow-lg hover:border-indigo-300 dark:hover:border-indigo-700/60 transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
+      {/* Ambient hover glow inside card */}
+      <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-indigo-500/5 blur-2xl group-hover:bg-indigo-500/10 transition-colors pointer-events-none" />
+
       <div>
-        {/* Category & Status Badges */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize border ${colorClass}`}>
-            {event.category}
-          </span>
-          <span className="text-xs font-medium text-zinc-500 capitalize">
-            {event.status}
-          </span>
+        {/* Top Header: Category Tag & Calendar Block */}
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize border ${style.bg} ${style.text} ${style.border}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+              {event.category}
+            </span>
+
+            {isFull ? (
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
+                Full
+              </span>
+            ) : spotsLeft !== null && spotsLeft <= 5 ? (
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
+                {spotsLeft} spot{spotsLeft === 1 ? '' : 's'} left
+              </span>
+            ) : null}
+          </div>
+
+          {/* Calendar block */}
+          <div className="flex flex-col items-center justify-center w-12 h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200/70 dark:border-zinc-700/70 text-center flex-shrink-0 shadow-xs">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+              {monthStr}
+            </span>
+            <span className="text-lg font-black leading-none text-zinc-900 dark:text-zinc-100">
+              {dayStr}
+            </span>
+          </div>
         </div>
 
         {/* Title */}
-        <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
-          {event.title}
-        </h3>
+        <Link href={`/events/${event._id}`} className="block group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+          <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-snug">
+            {event.title}
+          </h3>
+        </Link>
 
         {/* Description snippet */}
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
           {event.description}
         </p>
 
-        {/* Meta details */}
-        <div className="mt-4 space-y-2 text-xs text-zinc-500 dark:text-zinc-400">
+        {/* Meta details: Time & Location */}
+        <div className="mt-5 space-y-2 text-xs text-zinc-500 dark:text-zinc-400">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-            <span>
-              {formattedDate} • {formattedTime}
-            </span>
+            <Clock className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
+            <span className="font-medium">{timeStr}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-            <span className="truncate">{event.location}</span>
+            <MapPin className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
+            <span className="truncate font-medium">{event.location}</span>
           </div>
         </div>
       </div>
 
-      {/* Footer: Organizer & Attendees & Button */}
-      <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+      {/* Footer: Organizer + Attendees count + CTA link */}
+      <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 text-white flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0">
             {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : 'U'}
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
-            <Users className="w-3.5 h-3.5 text-zinc-400" />
-            <span>
-              {attendeeCount}
-              {event.maxAttendees > 0 ? ` / ${event.maxAttendees}` : ''}
-            </span>
-          </div>
+          <span className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[100px] font-medium">
+            {event.organizer?.name || 'Organizer'}
+          </span>
         </div>
 
-        <Link
-          href={`/events/${event._id}`}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform"
-        >
-          <span>Details</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 font-medium bg-zinc-100/70 dark:bg-zinc-800/60 px-2.5 py-1 rounded-full">
+            <Users className="w-3.5 h-3.5 text-indigo-500" />
+            <span>
+              {attendeeCount}
+              {event.maxAttendees > 0 ? `/${event.maxAttendees}` : ''}
+            </span>
+          </div>
+
+          <Link
+            href={`/events/${event._id}`}
+            aria-label={`View ${event.title}`}
+            className="grid h-8 w-8 place-items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition-all shadow-xs group-hover:scale-105"
+          >
+            <ArrowUpRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     </div>
   );
