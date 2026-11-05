@@ -23,6 +23,7 @@ import {
   Sparkles,
   Pencil,
 } from 'lucide-react';
+import Image from 'next/image';
 
 function EventDetailContent() {
   const router = useRouter();
@@ -228,14 +229,19 @@ function EventDetailContent() {
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-8 rounded-3xl soft-shadow space-y-6 overflow-hidden">
             {event.coverImage && (
-              <div className="w-full h-56 sm:h-80 -mt-4 sm:-mt-8 -mx-4 sm:-mx-8 w-[calc(100%+2rem)] sm:w-[calc(100%+4rem)] mb-6 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                <img
-                  src={event.coverImage}
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+                <div className="relative -mx-4 -mt-4 mb-6 aspect-video overflow-hidden bg-zinc-100 dark:bg-zinc-800 sm:-mx-8 sm:-mt-8">
+                  <Image
+                      src={event.coverImage}
+                      alt={event.title}
+                      fill
+                      priority
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 66vw"
+                      className="object-cover object-center"
+                    />
+                  {/* subtle depth gradient — remove if you want a pure image */}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                </div>
+              )}
 
             <div className="flex items-center gap-2.5">
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider badge-mood">
