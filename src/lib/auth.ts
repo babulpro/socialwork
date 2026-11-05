@@ -45,6 +45,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ['google', 'facebook'],
+    },
+  },
   socialProviders: {
     ...(process.env.GOOGLE_CLIENT_ID && (process.env.GOOGLE_CLIENT_SECRECT || process.env.GOOGLE_CLIENT_SECRET)
       ? {
