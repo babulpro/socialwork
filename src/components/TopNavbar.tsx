@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { signOut, useSession } from '@/lib/auth-client';
 import { Calendar, Plus } from '@gravity-ui/icons';
 import { Sparkles, User, Settings, LogOut } from 'lucide-react';
@@ -82,9 +83,21 @@ export default function TopNavbar() {
                 aria-label="User Account Menu"
                 className="flex cursor-pointer items-center gap-1.5 sm:gap-2 rounded-full p-1 pr-2 sm:pr-2.5 outline-none transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-indigo-500 border border-zinc-200/80 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-900/50"
               >
-                <span className="grid h-7 w-7 place-items-center rounded-full btn-primary-glow text-white text-xs font-bold shadow-sm">
-                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                </span>
+                {user.image ? (
+                  <div className="relative h-7 w-7 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-zinc-300 dark:ring-zinc-700 bg-zinc-200">
+                    <Image
+                      src={user.image}
+                      alt={user.name || 'User'}
+                      fill
+                      sizes="28px"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <span className="grid h-7 w-7 place-items-center rounded-full btn-primary-glow text-white text-xs font-bold shadow-sm">
+                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                  </span>
+                )}
 
                 <span className="hidden max-w-[110px] truncate text-xs font-semibold sm:block text-zinc-800 dark:text-zinc-200">
                   {user.name}
@@ -106,10 +119,27 @@ export default function TopNavbar() {
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3 py-2 border-b border-zinc-100 dark:border-zinc-800">
-                    <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">{user.name}</p>
-                    <p className="text-[11px] text-zinc-500 truncate">{user.email}</p>
+                <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="flex items-center gap-2.5 px-3 py-2.5 border-b border-zinc-100 dark:border-zinc-800">
+                    {user.image ? (
+                      <div className="relative h-9 w-9 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-zinc-300 dark:ring-zinc-700">
+                        <Image
+                          src={user.image}
+                          alt={user.name || 'User'}
+                          fill
+                          sizes="36px"
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <span className="grid h-9 w-9 place-items-center rounded-full btn-primary-glow text-white text-xs font-bold shadow-sm flex-shrink-0">
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">{user.name}</p>
+                      <p className="text-[11px] text-zinc-500 truncate">{user.email}</p>
+                    </div>
                   </div>
 
                   <div className="py-1">

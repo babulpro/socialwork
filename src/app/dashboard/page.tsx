@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession } from '@/lib/auth-client';
 import { apiRequest } from '@/lib/api';
 import { Event, EventsResponse } from '@/types';
@@ -83,9 +84,21 @@ export default function DashboardPage() {
       {/* Profile Header Bar */}
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-8 rounded-3xl soft-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-3xl btn-primary-glow text-white flex items-center justify-center text-xl sm:text-2xl font-black shadow-lg flex-shrink-0">
-            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-          </div>
+          {user.image ? (
+            <div className="relative w-14 sm:w-16 h-14 sm:h-16 rounded-3xl overflow-hidden ring-2 ring-indigo-500/30 shadow-lg flex-shrink-0">
+              <Image
+                src={user.image}
+                alt={user.name || 'User'}
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-3xl btn-primary-glow text-white flex items-center justify-center text-xl sm:text-2xl font-black shadow-lg flex-shrink-0">
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+          )}
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">

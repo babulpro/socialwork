@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession } from '@/lib/auth-client';
 import { apiRequest } from '@/lib/api';
 import { Event } from '@/types';
@@ -358,24 +359,26 @@ function EditEventContent() {
                 />
 
                 {coverImage ? (
-                  <div className="relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 h-44 group">
-                    <img
+                  <div className="relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 h-48 sm:h-52 bg-zinc-900 group">
+                    <Image
                       src={coverImage}
                       alt="Cover Preview"
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 600px"
+                      className="object-cover object-center transition-transform duration-300 group-hover:scale-102"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-10">
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-1.5 rounded-xl bg-white text-zinc-900 text-xs font-semibold shadow-md hover:bg-zinc-100 cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl bg-white/95 text-zinc-900 text-xs font-semibold shadow-md hover:bg-white cursor-pointer transition-transform hover:scale-105"
                       >
                         Change Photo
                       </button>
                       <button
                         type="button"
                         onClick={handleRemoveImage}
-                        className="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-semibold shadow-md hover:bg-rose-700 cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-semibold shadow-md hover:bg-rose-700 cursor-pointer transition-transform hover:scale-105"
                       >
                         Remove
                       </button>

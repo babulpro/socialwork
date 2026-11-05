@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Event } from '@/types';
 import { MapPin, Users, ArrowUpRight, Clock, Sparkles } from 'lucide-react';
 
@@ -86,16 +87,16 @@ export default function EventCard({ event }: EventCardProps) {
         style={{ background: 'var(--primary-glow)' }}
       />
 
-      {/* Smart Cover Banner (Image or Curated Gradient) */}
+      {/* Smart Cover Banner (Next.js Image or Curated Gradient) */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-950">
         {hasValidImage ? (
-          <img
-            src={event.coverImage}
+          <Image
+            src={event.coverImage!}
             alt={event.title}
-            loading="lazy"
-            decoding="async"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             onError={() => setImageError(true)}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
           />
         ) : (
           /* Smart Curated Generative Visual Banner */

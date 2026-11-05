@@ -22,8 +22,21 @@ import {
   Check,
   Sparkles,
   Pencil,
+  Maximize2,
+  X,
 } from 'lucide-react';
 import Image from 'next/image';
+
+const CATEGORY_META: Record<string, { gradient: string; emoji: string }> = {
+  tech: { gradient: 'from-indigo-600 via-indigo-800 to-slate-900', emoji: '💻' },
+  social: { gradient: 'from-pink-500 via-purple-700 to-indigo-900', emoji: '🎉' },
+  sports: { gradient: 'from-emerald-600 via-teal-800 to-slate-900', emoji: '⚽' },
+  education: { gradient: 'from-amber-600 via-orange-700 to-stone-900', emoji: '📚' },
+  music: { gradient: 'from-fuchsia-600 via-purple-800 to-slate-950', emoji: '🎵' },
+  food: { gradient: 'from-orange-500 via-amber-700 to-neutral-900', emoji: '🍕' },
+  art: { gradient: 'from-rose-500 via-violet-700 to-slate-900', emoji: '🎨' },
+  other: { gradient: 'from-violet-600 via-purple-800 to-slate-900', emoji: '✨' },
+};
 
 function EventDetailContent() {
   const router = useRouter();
@@ -38,6 +51,18 @@ function EventDetailContent() {
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setImageModalOpen(false);
+    };
+    if (imageModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [imageModalOpen]);
 
   const loadEvent = async () => {
     if (!eventId) return;
@@ -228,20 +253,49 @@ function EventDetailContent() {
         {/* Left Column (Content) */}
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-8 rounded-3xl soft-shadow space-y-6 overflow-hidden">
-            {event.coverImage && (
-                <div className="relative -mx-4 -mt-4 mb-6 aspect-video overflow-hidden bg-zinc-100 dark:bg-zinc-800 sm:-mx-8 sm:-mt-8">
-                  <Image
-                      src={event.coverImage}
-                      alt={event.title}
-                      fill
-                      priority
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 66vw"
-                      className="object-cover object-center"
-                    />
-                  {/* subtle depth gradient — remove if you want a pure image */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-                </div>
-              )}
+            {/* Hero Cover Banner (Next.js Image in Proper View with Lightbox Zoom) */}
+            {event.coverImage && !imageError ? (
+              <div
+                className="relative -mx-4 -mt-4 mb-6 aspect-video sm:aspect-[21/9] max-h-[440px] overflow-hidden bg-zinc-950 sm:-mx-8 sm:-mt-8 group cursor-pointer"
+                onClick={() => setImageModalOpen(true)}
+                title="Click to view full image"
+              >
+                <Image
+                  src={event.coverImage}
+                  alt={event.title}
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 75vw"
+                  onError={() => setImageError(true)}
+                  className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-102"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
+
+                {/* Floating View Full Size Pill */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setImageModalOpen(true);
+                  }}
+                  className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md bg-black/60 hover:bg-black/80 text-white border border-white/20 shadow-md transition-all cursor-pointer opacity-90 group-hover:opacity-100"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>View Full Image</span>
+                </button>
+              </div>
+            ) : (
+              <div
+                className={`relative -mx-4 -mt-4 mb-6 aspect-[21/9] min-h-[170px] max-h-[240px] overflow-hidden sm:-mx-8 sm:-mt-8 bg-gradient-to-br ${
+                  (CATEGORY_META[event.category?.toLowerCase() || 'other'] || CATEGORY_META.other).gradient
+                } flex items-center justify-center relative`}
+              >
+                <div className="absolute inset-0 bg-dot-pattern opacity-20" />
+                <span className="text-6xl drop-shadow-xl select-none">
+                  {(CATEGORY_META[event.category?.toLowerCase() || 'other'] || CATEGORY_META.other).emoji}
+                </span>
+              </div>
+            )}
 
             <div className="flex items-center gap-2.5">
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider badge-mood">
@@ -301,9 +355,21 @@ function EventDetailContent() {
 
             {/* Organizer Info */}
             <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center text-sm font-extrabold shadow-sm flex-shrink-0">
-                {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : 'O'}
-              </div>
+              {(event.organizer as any)?.avatar || (event.organizer as any)?.image ? (
+                <div className="relative w-11 h-11 rounded-2xl overflow-hidden ring-1 ring-zinc-300 dark:ring-zinc-700 shadow-sm flex-shrink-0">
+                  <Image
+                    src={(event.organizer as any)?.avatar || (event.organizer as any)?.image}
+                    alt={event.organizer?.name || 'Organizer'}
+                    fill
+                    sizes="44px"
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center text-sm font-extrabold shadow-sm flex-shrink-0">
+                  {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : 'O'}
+                </div>
+              )}
               <div>
                 <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Organized by</p>
                 <p className="text-sm font-bold text-zinc-900 dark:text-white">
@@ -333,15 +399,21 @@ function EventDetailContent() {
               <div className="flex flex-wrap gap-2.5">
                 {event.attendees.map((attendee: any, i: number) => {
                   const attName = typeof attendee === 'object' ? attendee?.name || 'Attendee' : 'Attendee';
-                  const attEmail = typeof attendee === 'object' ? attendee?.email : '';
+                  const attImage = typeof attendee === 'object' ? attendee?.avatar || attendee?.image : null;
                   return (
                     <div
                       key={i}
                       className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 text-xs font-semibold text-zinc-800 dark:text-zinc-200"
                     >
-                      <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center">
-                        {attName.charAt(0).toUpperCase()}
-                      </span>
+                      {attImage ? (
+                        <div className="relative w-5 h-5 rounded-full overflow-hidden flex-shrink-0">
+                          <Image src={attImage} alt={attName} fill sizes="20px" className="object-cover" />
+                        </div>
+                      ) : (
+                        <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center">
+                          {attName.charAt(0).toUpperCase()}
+                        </span>
+                      )}
                       <span className="truncate max-w-[120px]">{attName}</span>
                     </div>
                   );
@@ -443,6 +515,58 @@ function EventDetailContent() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal for Full Uncropped Image View */}
+      {imageModalOpen && event.coverImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => setImageModalOpen(false)}
+        >
+          {/* Top Bar Controls */}
+          <div
+            className="w-full max-w-6xl flex items-center justify-between pb-3 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-white text-xs sm:text-sm font-semibold truncate max-w-[70%]">
+              {event.title}
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href={event.coverImage}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-medium backdrop-blur-md transition-colors"
+              >
+                Open Original
+              </a>
+              <button
+                type="button"
+                onClick={() => setImageModalOpen(false)}
+                className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Full Image Container */}
+          <div
+            className="relative w-full max-w-5xl h-[75vh] sm:h-[82vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={event.coverImage}
+              alt={event.title}
+              fill
+              sizes="100vw"
+              quality={95}
+              className="object-contain"
+              priority
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

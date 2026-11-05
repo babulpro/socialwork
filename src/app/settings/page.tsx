@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession, signOut } from '@/lib/auth-client';
 import { ArrowLeft, User, Mail, Shield, LogOut, CheckCircle2, Sun, Moon, Sparkles, Palette, Check } from 'lucide-react';
 import { useTheme, MOOD_PRESETS, QUICK_CUSTOM_COLORS, ThemeMode, MoodPreset } from '@/context/ThemeContext';
@@ -257,9 +258,21 @@ export default function SettingsPage() {
       {/* Account Profile Card */}
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl p-4 sm:p-8 soft-shadow space-y-6">
         <div className="flex items-center gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-          <div className="w-16 h-16 rounded-3xl btn-primary-glow text-white flex items-center justify-center text-2xl font-black shadow-md shadow-indigo-600/20">
-            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-          </div>
+          {user.image ? (
+            <div className="relative w-16 h-16 rounded-3xl overflow-hidden ring-2 ring-indigo-500/30 shadow-md shadow-indigo-600/20 flex-shrink-0">
+              <Image
+                src={user.image}
+                alt={user.name || 'User'}
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-16 h-16 rounded-3xl btn-primary-glow text-white flex items-center justify-center text-2xl font-black shadow-md shadow-indigo-600/20 flex-shrink-0">
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+          )}
           <div>
             <h2 className="text-xl font-bold text-zinc-900 dark:text-white">{user.name}</h2>
             <p className="text-sm text-zinc-500">{user.email}</p>
