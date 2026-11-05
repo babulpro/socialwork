@@ -1,24 +1,60 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Event } from '@/types';
-import { MapPin, Users, ArrowUpRight, Clock } from 'lucide-react';
+import { MapPin, Users, ArrowUpRight, Clock, Sparkles } from 'lucide-react';
 
 interface EventCardProps {
   event: Event;
 }
 
-const categoryStyles: Record<string, { bg: string; text: string; dot: string; border: string }> = {
-  social: { bg: 'bg-blue-50 dark:bg-blue-950/40', text: 'text-blue-700 dark:text-blue-300', dot: 'bg-blue-500', border: 'border-blue-200 dark:border-blue-800' },
-  tech: { bg: 'bg-indigo-50 dark:bg-indigo-950/40', text: 'text-indigo-700 dark:text-indigo-300', dot: 'bg-indigo-500', border: 'border-indigo-200 dark:border-indigo-800' },
-  sports: { bg: 'bg-emerald-50 dark:bg-emerald-950/40', text: 'text-emerald-700 dark:text-emerald-300', dot: 'bg-emerald-500', border: 'border-emerald-200 dark:border-emerald-800' },
-  education: { bg: 'bg-amber-50 dark:bg-amber-950/40', text: 'text-amber-700 dark:text-amber-300', dot: 'bg-amber-500', border: 'border-amber-200 dark:border-amber-800' },
-  music: { bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/40', text: 'text-fuchsia-700 dark:text-fuchsia-300', dot: 'bg-fuchsia-500', border: 'border-fuchsia-200 dark:border-fuchsia-800' },
-  food: { bg: 'bg-orange-50 dark:bg-orange-950/40', text: 'text-orange-700 dark:text-orange-300', dot: 'bg-orange-500', border: 'border-orange-200 dark:border-orange-800' },
-  art: { bg: 'bg-rose-50 dark:bg-rose-950/40', text: 'text-rose-700 dark:text-rose-300', dot: 'bg-rose-500', border: 'border-rose-200 dark:border-rose-800' },
-  other: { bg: 'bg-zinc-100 dark:bg-zinc-800/60', text: 'text-zinc-700 dark:text-zinc-300', dot: 'bg-zinc-500', border: 'border-zinc-200 dark:border-zinc-700' },
+const CATEGORY_META: Record<string, { gradient: string; emoji: string; dotColor: string }> = {
+  tech: {
+    gradient: 'from-indigo-600 via-indigo-800 to-slate-900',
+    emoji: '💻',
+    dotColor: 'bg-indigo-400',
+  },
+  social: {
+    gradient: 'from-pink-500 via-purple-700 to-indigo-900',
+    emoji: '🎉',
+    dotColor: 'bg-pink-400',
+  },
+  sports: {
+    gradient: 'from-emerald-600 via-teal-800 to-slate-900',
+    emoji: '⚽',
+    dotColor: 'bg-emerald-400',
+  },
+  education: {
+    gradient: 'from-amber-600 via-orange-700 to-stone-900',
+    emoji: '📚',
+    dotColor: 'bg-amber-400',
+  },
+  music: {
+    gradient: 'from-fuchsia-600 via-purple-800 to-slate-950',
+    emoji: '🎵',
+    dotColor: 'bg-fuchsia-400',
+  },
+  food: {
+    gradient: 'from-orange-500 via-amber-700 to-neutral-900',
+    emoji: '🍕',
+    dotColor: 'bg-orange-400',
+  },
+  art: {
+    gradient: 'from-rose-500 via-violet-700 to-slate-900',
+    emoji: '🎨',
+    dotColor: 'bg-rose-400',
+  },
+  other: {
+    gradient: 'from-violet-600 via-purple-800 to-slate-900',
+    emoji: '✨',
+    dotColor: 'bg-violet-400',
+  },
 };
 
 export default function EventCard({ event }: EventCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   const eventDate = new Date(event.date);
   const monthStr = eventDate.toLocaleDateString('en-US', { month: 'short' });
   const dayStr = eventDate.getDate();
@@ -37,112 +73,143 @@ export default function EventCard({ event }: EventCardProps) {
   const spotsLeft = event.maxAttendees > 0 ? Math.max(0, event.maxAttendees - attendeeCount) : null;
   const isFull = event.maxAttendees > 0 && spotsLeft === 0;
 
-  const style = categoryStyles[event.category] || categoryStyles.other;
+  const categoryKey = (event.category || 'other').toLowerCase();
+  const meta = CATEGORY_META[categoryKey] || CATEGORY_META.other;
+
+  const hasValidImage = Boolean(event.coverImage) && !imageError;
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 soft-shadow hover:soft-shadow-lg hover:border-primary-themed transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
-      {/* Ambient hover glow inside card using active mood glow */}
+    <div className="group relative flex flex-col justify-between rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 soft-shadow hover:soft-shadow-lg hover:border-primary-themed transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
+      {/* Ambient hover glow inside card */}
       <div
-        className="absolute -right-12 -top-12 h-32 w-32 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        className="absolute -right-12 -top-12 h-36 w-36 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{ background: 'var(--primary-glow)' }}
       />
 
-      {/* Cover Image if present */}
-      {event.coverImage && (
-        <div className="relative w-[calc(100%+3rem)] h-40 -mx-6 -mt-6 mb-5 overflow-hidden border-b border-zinc-100 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800">
+      {/* Smart Cover Banner (Image or Curated Gradient) */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-950">
+        {hasValidImage ? (
           <img
             src={event.coverImage}
             alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            decoding="async"
+            onError={() => setImageError(true)}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
           />
-        </div>
-      )}
-
-      <div>
-        {/* Top Header: Category Tag & Calendar Block */}
-        <div className="flex items-start justify-between gap-4 mb-5">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize border ${style.bg} ${style.text} ${style.border}`}
-            >
-              <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-              {event.category}
+        ) : (
+          /* Smart Curated Generative Visual Banner */
+          <div
+            className={`h-full w-full bg-gradient-to-br ${meta.gradient} flex items-center justify-center relative overflow-hidden transition-transform duration-700 group-hover:scale-105`}
+          >
+            {/* Ambient pattern */}
+            <div className="absolute inset-0 bg-dot-pattern opacity-25" />
+            <div className="absolute -right-8 -bottom-8 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+            <span className="text-5xl drop-shadow-lg transform group-hover:scale-115 transition-transform duration-500 select-none">
+              {meta.emoji}
             </span>
-
-            {isFull ? (
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
-                Full
-              </span>
-            ) : spotsLeft !== null && spotsLeft <= 5 ? (
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
-                {spotsLeft} spot{spotsLeft === 1 ? '' : 's'} left
-              </span>
-            ) : null}
           </div>
+        )}
 
-          {/* Calendar block */}
-          <div className="flex flex-col items-center justify-center w-12 h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200/70 dark:border-zinc-700/70 text-center flex-shrink-0 shadow-xs">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-primary-themed">
+        {/* High-end Ambient Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/35 pointer-events-none" />
+
+        {/* Top Floating Badges */}
+        <div className="absolute top-3 inset-x-3 flex items-center justify-between gap-2 z-10 pointer-events-none">
+          {/* Category Chip */}
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-md bg-black/50 text-white border border-white/20 shadow-xs capitalize">
+            <span className={`w-1.5 h-1.5 rounded-full ${meta.dotColor}`} />
+            <span>{event.category || 'Event'}</span>
+          </span>
+
+          {/* Floating Calendar Date Badge */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md bg-black/60 text-white border border-white/20 shadow-xs text-xs">
+            <span className="text-primary-themed font-extrabold uppercase tracking-wider text-[10px]">
               {monthStr}
             </span>
-            <span className="text-lg font-black leading-none text-zinc-900 dark:text-zinc-100">
-              {dayStr}
-            </span>
+            <span className="text-zinc-400 text-[10px]">•</span>
+            <span className="font-black text-xs text-white">{dayStr}</span>
           </div>
         </div>
 
-        {/* Title */}
-        <Link href={`/events/${event._id}`} className="block group-hover:text-primary-themed transition-colors">
-          <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-snug">
-            {event.title}
-          </h3>
-        </Link>
+        {/* Bottom Floating Status / Time */}
+        <div className="absolute bottom-3 inset-x-3 flex items-center justify-between gap-2 z-10 pointer-events-none">
+          {isFull ? (
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold backdrop-blur-md bg-rose-600/85 text-white border border-rose-400/30 shadow-xs">
+              Sold Out
+            </span>
+          ) : spotsLeft !== null && spotsLeft <= 5 ? (
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold backdrop-blur-md bg-amber-500/85 text-white border border-amber-400/30 shadow-xs">
+              ⚡ Only {spotsLeft} left
+            </span>
+          ) : (
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium backdrop-blur-md bg-white/20 text-white border border-white/15 shadow-xs">
+              Free to Attend
+            </span>
+          )}
 
-        {/* Description snippet */}
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
-          {event.description}
-        </p>
-
-        {/* Meta details: Time & Location */}
-        <div className="mt-5 space-y-2 text-xs text-zinc-500 dark:text-zinc-400">
-          <div className="flex items-center gap-2">
-            <Clock className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
-            <span className="font-medium">{timeStr}</span>
+          <div className="flex items-center gap-1 text-[11px] font-semibold text-white/95 backdrop-blur-md bg-black/50 px-2 py-0.5 rounded-full border border-white/15 shadow-xs">
+            <Clock className="w-3 h-3 text-white/80" />
+            <span>{timeStr}</span>
           </div>
+        </div>
+      </div>
+
+      {/* Card Content Details */}
+      <div className="flex flex-1 flex-col justify-between p-5 space-y-4">
+        <div className="space-y-2">
+          {/* Title */}
+          <Link
+            href={`/events/${event._id}`}
+            className="block group-hover:text-primary-themed transition-colors"
+          >
+            <h3 className="font-bold text-base sm:text-lg text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-snug tracking-tight">
+              {event.title}
+            </h3>
+          </Link>
+
+          {/* Description snippet */}
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+            {event.description}
+          </p>
+        </div>
+
+        {/* Location snippet */}
+        <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
           <div className="flex items-center gap-2">
             <MapPin className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
             <span className="truncate font-medium">{event.location}</span>
           </div>
         </div>
-      </div>
 
-      {/* Footer: Organizer + Attendees count + CTA link */}
-      <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-full btn-primary-glow text-white flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0">
-            {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : 'U'}
-          </div>
-          <span className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[100px] font-medium">
-            {event.organizer?.name || 'Organizer'}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 font-medium bg-zinc-100/70 dark:bg-zinc-800/60 px-2.5 py-1 rounded-full">
-            <Users className="w-3.5 h-3.5 text-primary-themed" />
-            <span>
-              {attendeeCount}
-              {event.maxAttendees > 0 ? `/${event.maxAttendees}` : ''}
+        {/* Footer: Organizer + Attendees count + Action Link */}
+        <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-full btn-primary-glow text-white flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0">
+              {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <span className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[110px] font-medium">
+              {event.organizer?.name || 'Organizer'}
             </span>
           </div>
 
-          <Link
-            href={`/events/${event._id}`}
-            aria-label={`View ${event.title}`}
-            className="grid h-8 w-8 place-items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:btn-primary-glow transition-all shadow-xs group-hover:scale-105"
-          >
-            <ArrowUpRight className="w-4 h-4" />
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-300 font-medium bg-zinc-100/80 dark:bg-zinc-800/80 px-2.5 py-1 rounded-full border border-zinc-200/50 dark:border-zinc-700/50">
+              <Users className="w-3.5 h-3.5 text-primary-themed" />
+              <span>
+                {attendeeCount}
+                {event.maxAttendees > 0 ? `/${event.maxAttendees}` : ''}
+              </span>
+            </div>
+
+            <Link
+              href={`/events/${event._id}`}
+              aria-label={`View ${event.title}`}
+              className="grid h-8 w-8 place-items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:btn-primary-glow transition-all shadow-xs group-hover:scale-105"
+            >
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>
