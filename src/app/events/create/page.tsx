@@ -40,6 +40,7 @@ export default function CreateEventPage() {
   const { data: session, isPending: isLoading } = useSession();
   const user = session?.user;
 
+  const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState('');
@@ -117,6 +118,42 @@ export default function CreateEventPage() {
     }
   };
 
+  // Clear all form inputs and states
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setLocation('');
+    setDate('');
+    setTime('18:00');
+    setCategory('tech');
+    setMaxAttendees('');
+    setIsPublic(true);
+    setCoverImage('');
+    setImageTab('upload');
+    setUploadError(null);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+  };
+
+  // Ensure fields are clean when the create page is loaded, unmounted, or restored from bfcache
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        resetForm();
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+      resetForm();
+    };
+  }, []);
+
   const handleRemoveImage = () => {
     setCoverImage('');
     setUploadError(null);
@@ -154,6 +191,9 @@ export default function CreateEventPage() {
         method: 'POST',
         body: JSON.stringify(payload),
       });
+
+      // Clear all input fields and states after successful event upload
+      resetForm();
 
       if (data?.event?._id) {
         router.push(`/events/${data.event._id}`);
@@ -222,7 +262,7 @@ export default function CreateEventPage() {
       {/* Grid: Form on Left, Live Preview on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Form Column */}
-        <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-8 rounded-3xl soft-shadow">
+        <form ref={formRef} onSubmit={handleSubmit} className="lg:col-span-7 space-y-6 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-8 rounded-3xl soft-shadow">
           {/* Title */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
