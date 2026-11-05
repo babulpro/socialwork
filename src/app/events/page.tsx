@@ -61,7 +61,7 @@ export default function EventsPage() {
             <h1 className="text-3xl sm:text-4xl font-black text-zinc-900 dark:text-white tracking-tight">
               Explore Events
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/80">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold badge-mood">
               {filteredEvents.length}
             </span>
           </div>
@@ -72,7 +72,7 @@ export default function EventsPage() {
 
         <Link
           href="/events/new"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md shadow-indigo-600/25 transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl btn-primary-glow text-white font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Host Event</span>

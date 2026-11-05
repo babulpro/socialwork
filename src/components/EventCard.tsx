@@ -40,9 +40,12 @@ export default function EventCard({ event }: EventCardProps) {
   const style = categoryStyles[event.category] || categoryStyles.other;
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 soft-shadow hover:soft-shadow-lg hover:border-indigo-300 dark:hover:border-indigo-700/60 transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
-      {/* Ambient hover glow inside card */}
-      <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-indigo-500/5 blur-2xl group-hover:bg-indigo-500/10 transition-colors pointer-events-none" />
+    <div className="group relative flex flex-col justify-between rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 soft-shadow hover:soft-shadow-lg hover:border-primary-themed transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
+      {/* Ambient hover glow inside card using active mood glow */}
+      <div
+        className="absolute -right-12 -top-12 h-32 w-32 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: 'var(--primary-glow)' }}
+      />
 
       {/* Cover Image if present */}
       {event.coverImage && (
@@ -79,7 +82,7 @@ export default function EventCard({ event }: EventCardProps) {
 
           {/* Calendar block */}
           <div className="flex flex-col items-center justify-center w-12 h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800/80 border border-zinc-200/70 dark:border-zinc-700/70 text-center flex-shrink-0 shadow-xs">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-primary-themed">
               {monthStr}
             </span>
             <span className="text-lg font-black leading-none text-zinc-900 dark:text-zinc-100">
@@ -89,7 +92,7 @@ export default function EventCard({ event }: EventCardProps) {
         </div>
 
         {/* Title */}
-        <Link href={`/events/${event._id}`} className="block group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+        <Link href={`/events/${event._id}`} className="block group-hover:text-primary-themed transition-colors">
           <h3 className="font-bold text-lg text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-snug">
             {event.title}
           </h3>
@@ -116,7 +119,7 @@ export default function EventCard({ event }: EventCardProps) {
       {/* Footer: Organizer + Attendees count + CTA link */}
       <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 text-white flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0">
+          <div className="w-7 h-7 rounded-full btn-primary-glow text-white flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0">
             {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : 'U'}
           </div>
           <span className="text-xs text-zinc-600 dark:text-zinc-400 truncate max-w-[100px] font-medium">
@@ -126,7 +129,7 @@ export default function EventCard({ event }: EventCardProps) {
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 font-medium bg-zinc-100/70 dark:bg-zinc-800/60 px-2.5 py-1 rounded-full">
-            <Users className="w-3.5 h-3.5 text-indigo-500" />
+            <Users className="w-3.5 h-3.5 text-primary-themed" />
             <span>
               {attendeeCount}
               {event.maxAttendees > 0 ? `/${event.maxAttendees}` : ''}
@@ -136,7 +139,7 @@ export default function EventCard({ event }: EventCardProps) {
           <Link
             href={`/events/${event._id}`}
             aria-label={`View ${event.title}`}
-            className="grid h-8 w-8 place-items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white transition-all shadow-xs group-hover:scale-105"
+            className="grid h-8 w-8 place-items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:btn-primary-glow transition-all shadow-xs group-hover:scale-105"
           >
             <ArrowUpRight className="w-4 h-4" />
           </Link>

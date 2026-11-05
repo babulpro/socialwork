@@ -472,7 +472,7 @@ export default function CreateEventPage() {
             <button
               type="submit"
               disabled={submitting || uploadingImage}
-              className="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-md shadow-indigo-600/30 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full py-4 rounded-2xl btn-primary-glow text-white font-bold text-sm transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {submitting ? (
                 <>

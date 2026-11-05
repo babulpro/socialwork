@@ -66,21 +66,33 @@ export default function HomePage() {
     <div className="space-y-16 pb-24">
       {/* Hero Section with Ambient Glows */}
       <section className="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-32 bg-dot-pattern border-b border-zinc-200/60 dark:border-zinc-800/60">
-        {/* Colorful Glow Orbs */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-indigo-500/20 via-violet-500/15 to-pink-500/10 blur-3xl pointer-events-none rounded-full" />
-        <div className="absolute -top-12 right-10 w-72 h-72 bg-blue-500/10 blur-3xl pointer-events-none rounded-full" />
+        {/* Dynamic Colorful Glow Orbs reflecting active mood */}
+        <div
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[380px] blur-3xl pointer-events-none rounded-full transition-all duration-700"
+          style={{
+            background:
+              'radial-gradient(ellipse at center, var(--accent-orb-1) 0%, var(--accent-orb-2) 50%, transparent 80%)',
+          }}
+        />
+        <div
+          className="absolute -top-12 right-10 w-72 h-72 blur-3xl pointer-events-none rounded-full transition-all duration-700"
+          style={{ background: 'var(--accent-orb-2)' }}
+        />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          {/* Top Pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-semibold mb-8 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+          {/* Top Pill Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full badge-mood text-xs font-semibold mb-8 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5" />
             <span>Discover & Host Real-World Meetups</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 dark:text-white max-w-4xl mx-auto leading-[1.12]">
             Create, Connect & Experience{' '}
-            <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-600 bg-clip-text text-transparent">
+            <span
+              className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-500"
+              style={{ backgroundImage: 'var(--gradient-accent)' }}
+            >
               Events Together
             </span>
           </h1>
@@ -94,7 +106,7 @@ export default function HomePage() {
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl btn-primary-glow text-white font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Compass className="w-4 h-4" />
               <span>Explore All Events</span>
@@ -102,9 +114,9 @@ export default function HomePage() {
 
             <Link
               href="/events/new"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-zinc-900 dark:text-zinc-100 font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] soft-shadow"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] soft-shadow"
             >
-              <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <Plus className="w-4 h-4 text-primary-themed" />
               <span>Host an Event</span>
             </Link>
           </div>
@@ -138,9 +150,9 @@ export default function HomePage() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-                Upcoming Events
+                Featured Events
               </h2>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200/80 dark:border-indigo-800/80">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold badge-mood">
                 {filteredEvents.length}
               </span>
             </div>
@@ -157,13 +169,13 @@ export default function HomePage() {
               placeholder="Search by title, location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all soft-shadow"
+              className="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all soft-shadow"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -181,7 +193,7 @@ export default function HomePage() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isSelected
-                    ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-md scale-[1.02]'
+                    ? 'btn-primary-glow shadow-md scale-[1.02]'
                     : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-800/80 hover:bg-zinc-100/70 dark:hover:bg-zinc-800/70'
                 }`}
               >
@@ -212,7 +224,7 @@ export default function HomePage() {
             <p className="text-sm font-semibold text-rose-600 dark:text-rose-400">{error}</p>
             <button
               onClick={fetchEvents}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-rose-200 dark:border-rose-800 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-rose-200 dark:border-rose-800 text-xs font-semibold text-rose-600 hover:bg-rose-50 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Retry</span>
@@ -220,7 +232,7 @@ export default function HomePage() {
           </div>
         ) : filteredEvents.length === 0 ? (
           <div className="text-center py-20 bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl p-8 space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center mx-auto text-indigo-600 dark:text-indigo-400">
+            <div className="w-12 h-12 rounded-2xl badge-mood flex items-center justify-center mx-auto">
               <Compass className="w-6 h-6" />
             </div>
             <div>
@@ -234,14 +246,14 @@ export default function HomePage() {
             {searchQuery ? (
               <button
                 onClick={() => setSearchQuery('')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs font-semibold hover:bg-zinc-200 transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs font-semibold hover:bg-zinc-200 transition-colors cursor-pointer"
               >
                 Clear Search Filter
               </button>
             ) : (
               <Link
                 href="/events/new"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl btn-primary-glow text-white text-xs font-semibold transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Create an Event Now</span>

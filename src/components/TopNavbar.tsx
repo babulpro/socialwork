@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { signOut, useSession } from '@/lib/auth-client';
 import { Calendar, Plus } from '@gravity-ui/icons';
 import { Sparkles } from 'lucide-react';
+import ThemeMoodSwitcher from '@/components/ThemeMoodSwitcher';
 
 export default function TopNavbar() {
   const { data: session, isPending } = useSession();
@@ -36,7 +37,7 @@ export default function TopNavbar() {
             href="/"
             className="group flex items-center gap-2.5 font-bold text-zinc-900 dark:text-zinc-100 text-lg tracking-tight"
           >
-            <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
+            <span className="grid h-8 w-8 place-items-center rounded-xl btn-primary-glow text-white group-hover:scale-105 transition-transform duration-200">
               <Sparkles className="h-4 w-4" />
             </span>
             <span className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-600 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent font-black tracking-tight text-xl">
@@ -56,7 +57,7 @@ export default function TopNavbar() {
             {user && (
               <Link
                 href="/events/new"
-                className="inline-flex items-center gap-1.5 rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm shadow-indigo-500/30 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/50 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center gap-1.5 rounded-full btn-primary-glow px-4 py-1.5 text-sm font-semibold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Create</span>
@@ -65,8 +66,11 @@ export default function TopNavbar() {
           </nav>
         </div>
 
-        {/* Right: Mobile Navigation + Auth */}
+        {/* Right: Theme Switcher + Mobile Navigation + Auth */}
         <div className="flex items-center gap-2 md:gap-3">
+          {/* Day / Night / Custom Mood Switcher */}
+          <ThemeMoodSwitcher />
+
           {/* Mobile Navigation */}
           <div className="flex items-center gap-1 md:hidden">
             <Link
@@ -81,7 +85,7 @@ export default function TopNavbar() {
               <Link
                 href="/events/new"
                 aria-label="Create event"
-                className="grid h-9 w-9 place-items-center rounded-full bg-indigo-600 text-white transition hover:bg-indigo-500 shadow-sm shadow-indigo-500/30"
+                className="grid h-9 w-9 place-items-center rounded-full btn-primary-glow text-white transition"
               >
                 <Plus className="h-4 w-4" />
               </Link>
@@ -98,7 +102,7 @@ export default function TopNavbar() {
                 onClick={() => setMenuOpen((v) => !v)}
                 className="flex cursor-pointer items-center gap-2 rounded-full p-1 pr-2.5 outline-none transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-indigo-500 border border-zinc-200/80 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-900/50"
               >
-                <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 text-white text-xs font-bold shadow-sm">
+                <span className="grid h-7 w-7 place-items-center rounded-full btn-primary-glow text-white text-xs font-bold shadow-sm">
                   {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </span>
 
@@ -143,7 +147,7 @@ export default function TopNavbar() {
                       onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                     >
-                      <span>Settings</span>
+                      <span>Settings & Mood</span>
                     </Link>
                   </div>
 
@@ -172,7 +176,7 @@ export default function TopNavbar() {
               </Link>
               <Link
                 href="/sign-up"
-                className="rounded-full bg-zinc-900 dark:bg-white px-4 py-1.5 text-sm font-semibold text-white dark:text-zinc-950 shadow-sm hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="rounded-full btn-primary-glow px-4 py-1.5 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Sign Up
               </Link>

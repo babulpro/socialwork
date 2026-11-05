@@ -227,7 +227,7 @@ function EventDetailContent() {
             )}
 
             <div className="flex items-center gap-2.5">
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/70">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider badge-mood">
                 {event.category}
               </span>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 capitalize">
@@ -405,7 +405,7 @@ function EventDetailContent() {
                 type="button"
                 onClick={handleJoin}
                 disabled={actionLoading}
-                className="w-full py-3.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-md shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 px-4 rounded-2xl btn-primary-glow text-white font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {actionLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
