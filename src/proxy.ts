@@ -15,9 +15,9 @@ export function proxy(request: NextRequest) {
 
   // Protected paths that require an active session
   const protectedRoutes = ['/dashboard', '/settings', '/events/new', '/events/create'];
-  const isProtected = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
-  );
+  const isProtected =
+    protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`)) ||
+    (pathname.startsWith('/events/') && pathname.endsWith('/edit'));
 
   // If user is accessing a protected route without a session, redirect to /sign-in
   if (isProtected && !sessionToken) {

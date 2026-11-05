@@ -21,6 +21,7 @@ import {
   Share2,
   Check,
   Sparkles,
+  Pencil,
 } from 'lucide-react';
 
 function EventDetailContent() {
@@ -184,14 +185,24 @@ function EventDetailContent() {
           </button>
 
           {isOrganizer && (
-            <button
-              onClick={handleDelete}
-              disabled={actionLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/30 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors cursor-pointer"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Delete</span>
-            </button>
+            <>
+              <Link
+                href={`/events/${event._id}/edit`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors soft-shadow"
+              >
+                <Pencil className="w-3.5 h-3.5 text-primary-themed" />
+                <span>Edit</span>
+              </Link>
+
+              <button
+                onClick={handleDelete}
+                disabled={actionLoading}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/30 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete</span>
+              </button>
+            </>
           )}
         </div>
       </div>
