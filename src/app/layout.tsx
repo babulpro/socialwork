@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Sparkles, Heart } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'babul • Modern Social Events & Community Gatherings',
+  title: 'SocialHub • Modern Social Events & Community Gatherings',
   description: 'Discover community gatherings, tech conferences, workshops, and social meetups. Host your own event in seconds and invite others to join.',
 };
 
@@ -27,7 +27,7 @@ export default function RootLayout({
                 <span className="grid h-7 w-7 place-items-center rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white font-bold text-xs shadow-xs">
                   <Sparkles className="w-3.5 h-3.5" />
                 </span>
-                <span className="font-bold text-zinc-800 dark:text-zinc-200 text-sm">babul</span>
+                <span className="font-bold text-zinc-800 dark:text-zinc-200 text-sm">SocialHub</span>
                 <span className="text-zinc-400">•</span>
                 <p>© 2026 Social Management Platform</p>
               </div>

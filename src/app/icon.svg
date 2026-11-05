@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+  </defs>
+  <!-- Background rounded squircle -->
+  <rect width="32" height="32" rx="9" fill="url(#grad)" />
+  
+  <!-- Modern Event / Star Emblem -->
+  <path d="M16 6 L18.2 12.8 L25 15 L18.2 17.2 L16 24 L13.8 17.2 L7 15 L13.8 12.8 Z" fill="#ffffff" />
+  
+  <!-- Subtle ambient circle -->
+  <circle cx="23" cy="9" r="2" fill="#ffffff" opacity="0.8" />
+</svg>
