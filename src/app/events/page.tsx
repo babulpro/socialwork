@@ -89,13 +89,13 @@ export default function EventsPage() {
             placeholder="Search events by title, topic, location..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-9 py-2.5 text-sm rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50 dark:bg-zinc-950/80 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="w-full pl-11 pr-9 py-2.5 text-base sm:text-sm rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50 dark:bg-zinc-950/80 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch('')}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -103,13 +103,13 @@ export default function EventsPage() {
         </div>
 
         {/* Category Filter & Sort Dropdowns */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500">
-            <Filter className="w-3.5 h-3.5" />
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full lg:w-auto">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 w-full sm:w-auto">
+            <Filter className="w-3.5 h-3.5 flex-shrink-0" />
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="py-2.5 px-3 text-xs font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 capitalize focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="w-full py-2.5 px-3 text-xs font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 capitalize focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer truncate"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c} className="capitalize">
@@ -119,12 +119,12 @@ export default function EventsPage() {
             </select>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-zinc-500">
-            <ArrowUpDown className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 w-full sm:w-auto">
+            <ArrowUpDown className="w-3.5 h-3.5 flex-shrink-0" />
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="py-2.5 px-3 text-xs font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="w-full py-2.5 px-3 text-xs font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer truncate"
             >
               <option value="-date">Latest Created</option>
               <option value="date">Upcoming Date</option>

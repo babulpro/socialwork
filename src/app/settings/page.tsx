@@ -62,7 +62,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Theme & Custom Mood Preferences */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl p-6 sm:p-8 soft-shadow space-y-6">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl p-4 sm:p-8 soft-shadow space-y-6">
         <div className="flex items-center justify-between pb-5 border-b border-zinc-100 dark:border-zinc-800">
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-2xl btn-primary-glow text-white shadow-xs">
@@ -255,7 +255,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Account Profile Card */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl p-6 sm:p-8 soft-shadow space-y-6">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-3xl p-4 sm:p-8 soft-shadow space-y-6">
         <div className="flex items-center gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800">
           <div className="w-16 h-16 rounded-3xl btn-primary-glow text-white flex items-center justify-center text-2xl font-black shadow-md shadow-indigo-600/20">
             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}

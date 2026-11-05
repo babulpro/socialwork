@@ -221,7 +221,7 @@ export default function CreateEventPage() {
       {/* Grid: Form on Left, Live Preview on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Form Column */}
-        <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-8 rounded-3xl soft-shadow">
+        <form onSubmit={handleSubmit} className="lg:col-span-7 space-y-6 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-8 rounded-3xl soft-shadow">
           {/* Title */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
@@ -233,7 +233,7 @@ export default function CreateEventPage() {
               placeholder="e.g. Next.js & React Developers Meetup"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="w-full px-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
             />
           </div>
 
@@ -341,7 +341,7 @@ export default function CreateEventPage() {
                   placeholder="https://images.unsplash.com/... or Cloudinary link"
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 />
               </div>
             )}
@@ -368,7 +368,7 @@ export default function CreateEventPage() {
                     onClick={() => setCategory(cat.id)}
                     className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl text-xs font-semibold border transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                        ? 'btn-primary-glow border-transparent shadow-sm'
                         : 'bg-zinc-50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 border-zinc-200/80 dark:border-zinc-700/80 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                     }`}
                   >
@@ -391,7 +391,7 @@ export default function CreateEventPage() {
               placeholder="Describe the agenda, who should attend, and what to expect..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+              className="w-full px-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
             />
           </div>
 
@@ -408,7 +408,7 @@ export default function CreateEventPage() {
                 placeholder="e.g. Dhaka Tech Park, Room 302 or Google Meet link"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               />
             </div>
           </div>
@@ -426,7 +426,7 @@ export default function CreateEventPage() {
                   required
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
                 />
               </div>
             </div>
@@ -442,7 +442,7 @@ export default function CreateEventPage() {
                   required
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
                 />
               </div>
             </div>
@@ -461,7 +461,7 @@ export default function CreateEventPage() {
                 placeholder="Leave blank for unlimited attendees"
                 value={maxAttendees}
                 onChange={(e) => setMaxAttendees(e.target.value === '' ? '' : Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               />
             </div>
             <p className="text-[11px] text-zinc-400">Leave blank if there is no attendance cap.</p>

@@ -81,27 +81,27 @@ export default function DashboardPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* Profile Header Bar */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-6 sm:p-8 rounded-3xl soft-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-4 sm:p-8 rounded-3xl soft-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-3xl btn-primary-glow text-white flex items-center justify-center text-2xl font-black shadow-lg flex-shrink-0">
+          <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-3xl btn-primary-glow text-white flex items-center justify-center text-xl sm:text-2xl font-black shadow-lg flex-shrink-0">
             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
                 {user.name}
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold badge-mood capitalize">
                 Member
               </span>
             </div>
-            <p className="text-sm text-zinc-500 mt-0.5">{user.email}</p>
+            <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">{user.email}</p>
           </div>
         </div>
 
         <Link
           href="/events/new"
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl btn-primary-glow text-white font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl btn-primary-glow text-white font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Host New Event</span>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
 
       {/* Segmented Tab Switcher */}
       <div className="space-y-6">
-        <div className="flex items-center gap-2 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3">
+        <div className="flex items-center gap-2 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3 overflow-x-auto scrollbar-none">
           <button
             onClick={() => setActiveTab('created')}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${

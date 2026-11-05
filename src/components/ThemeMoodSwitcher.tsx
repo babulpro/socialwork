@@ -79,7 +79,7 @@ export default function ThemeMoodSwitcher() {
 
       {/* Floating Theme & Mood Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-88 rounded-3xl border border-zinc-200/90 dark:border-zinc-800/90 bg-white/95 dark:bg-zinc-950/95 p-4 shadow-2xl backdrop-blur-2xl z-50 animate-in fade-in zoom-in-95 duration-150 space-y-4">
+        <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-88 max-w-[360px] max-h-[82vh] overflow-y-auto rounded-3xl border border-zinc-200/90 dark:border-zinc-800/90 bg-white/95 dark:bg-zinc-950/95 p-4 shadow-2xl backdrop-blur-2xl z-50 animate-in fade-in zoom-in-95 duration-150 space-y-4">
           {/* Header */}
           <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800/80">
             <div className="flex items-center gap-2">

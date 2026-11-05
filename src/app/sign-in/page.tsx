@@ -58,9 +58,9 @@ export default function SignInPage() {
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[350px] bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
 
-      <div className="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-8 sm:p-10 rounded-3xl soft-shadow-lg relative z-10">
+      <div className="w-full max-w-md space-y-8 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 p-5 sm:p-10 rounded-3xl soft-shadow-lg relative z-10">
         <div className="text-center space-y-2">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 mx-auto flex items-center justify-center shadow-xs">
+          <div className="w-10 h-10 rounded-2xl btn-primary-glow text-white mx-auto flex items-center justify-center shadow-xs">
             <Sparkles className="w-5 h-5" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
@@ -150,7 +150,7 @@ export default function SignInPage() {
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               />
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function SignInPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               />
             </div>
           </div>

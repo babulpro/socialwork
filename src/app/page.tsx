@@ -87,7 +87,7 @@ export default function HomePage() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 dark:text-white max-w-4xl mx-auto leading-[1.12]">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 dark:text-white max-w-4xl mx-auto leading-[1.15]">
             Create, Connect & Experience{' '}
             <span
               className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-500"
@@ -98,15 +98,15 @@ export default function HomePage() {
           </h1>
 
           {/* Subtitle */}
-          <p className="mt-6 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 sm:mt-6 text-sm sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
             The modern social management hub. Browse community hangouts, tech workshops, sports meetups, or host your own in seconds and gather with people.
           </p>
 
           {/* CTA Buttons */}
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 max-w-sm sm:max-w-none mx-auto">
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl btn-primary-glow text-white font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl btn-primary-glow text-white font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
             >
               <Compass className="w-4 h-4" />
               <span>Explore All Events</span>
@@ -114,7 +114,7 @@ export default function HomePage() {
 
             <Link
               href="/events/new"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] soft-shadow"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 font-semibold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] soft-shadow w-full sm:w-auto"
             >
               <Plus className="w-4 h-4 text-primary-themed" />
               <span>Host an Event</span>
@@ -169,7 +169,7 @@ export default function HomePage() {
               placeholder="Search by title, location..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all soft-shadow"
+              className="w-full pl-10 pr-9 py-2.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all soft-shadow"
             />
             {searchQuery && (
               <button

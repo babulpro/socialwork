@@ -1,13 +1,21 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Providers } from './providers';
 import TopNavbar from '@/components/TopNavbar';
+import MobileBottomNav from '@/components/MobileBottomNav';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'SocialHub • Modern Social Events & Community Gatherings',
   description: 'Discover community gatherings, tech conferences, workshops, and social meetups. Host your own event in seconds and invite others to join.',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -58,11 +66,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white">
+      <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden">
         <Providers>
           <TopNavbar />
-          <main className="flex-1 pt-16">{children}</main>
-          <footer className="border-t border-zinc-200/60 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-md py-10 text-xs text-zinc-500">
+          <main className="flex-1 pt-16 pb-20 md:pb-0">{children}</main>
+          <MobileBottomNav />
+          <footer className="border-t border-zinc-200/60 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-md py-10 text-xs text-zinc-500 mb-16 md:mb-0">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-3">
                 <span className="grid h-7 w-7 place-items-center rounded-xl btn-primary-glow text-white font-bold text-xs shadow-xs">
