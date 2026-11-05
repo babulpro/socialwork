@@ -36,6 +36,13 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [todayTimestamp, setTodayTimestamp] = useState<number>(0);
+
+  useEffect(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    setTodayTimestamp(d.getTime());
+  }, []);
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -56,11 +63,19 @@ export default function HomePage() {
     fetchEvents();
   }, [selectedCategory]);
 
-  const filteredEvents = events.filter((e) =>
-    e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    e.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredEvents = events.filter((e) => {
+    // Only show events from today to future dates (passed date events will not show)
+    if (todayTimestamp > 0) {
+      const isUpcoming = new Date(e.date).getTime() >= todayTimestamp;
+      if (!isUpcoming) return false;
+    }
+
+    return (
+      e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div className="space-y-16 pb-24">

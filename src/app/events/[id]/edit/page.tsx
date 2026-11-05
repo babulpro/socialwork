@@ -57,6 +57,11 @@ function EditEventContent() {
   const [category, setCategory] = useState<Event['category']>('tech');
   const [maxAttendees, setMaxAttendees] = useState<number | ''>('');
   const [isPublic, setIsPublic] = useState(true);
+  const [todayStr, setTodayStr] = useState('');
+
+  useEffect(() => {
+    setTodayStr(new Date().toISOString().split('T')[0]);
+  }, []);
 
   // Cover image states
   const [coverImage, setCoverImage] = useState('');
@@ -213,7 +218,17 @@ function EditEventContent() {
         throw new Error('Please fill in all required fields marked with *');
       }
 
-      const dateTime = new Date(`${date}T${time}`).toISOString();
+      const selectedDateTime = new Date(`${date}T${time}`);
+      if (isNaN(selectedDateTime.getTime())) {
+        throw new Error('Please enter a valid event date and time.');
+      }
+
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      if (selectedDateTime < fiveMinutesAgo) {
+        throw new Error('Event date and time cannot be in the past. Please select today or a future date/time.');
+      }
+
+      const dateTime = selectedDateTime.toISOString();
 
       const payload: any = {
         title: title.trim(),
@@ -247,12 +262,13 @@ function EditEventContent() {
   };
 
   // Live Card Preview
+  const previewDate = date ? `${date}T${time || '00:00'}:00.000Z` : originalEvent?.date || '';
   const previewEvent: Event = {
     _id: eventId,
     title: title || 'Your Event Title',
     description: description || 'Your event description will appear here...',
     category,
-    date: date ? new Date(`${date}T${time || '00:00'}`).toISOString() : new Date().toISOString(),
+    date: previewDate,
     location: location || 'Venue or Online Link',
     coverImage: coverImage || '',
     maxAttendees: typeof maxAttendees === 'number' ? maxAttendees : 0,
@@ -264,8 +280,8 @@ function EditEventContent() {
       _id: user.id,
       name: user.name || 'You',
     },
-    createdAt: originalEvent?.createdAt || new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: originalEvent?.createdAt || '',
+    updatedAt: '',
   };
 
   return (
@@ -505,8 +521,17 @@ function EditEventContent() {
                 <input
                   type="date"
                   required
+                  min={todayStr || undefined}
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val && todayStr && val < todayStr) {
+                      setError('Event date cannot be in the past. Please choose today or a future date.');
+                      return;
+                    }
+                    setError(null);
+                    setDate(val);
+                  }}
                   className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
                 />
               </div>

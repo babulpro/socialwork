@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { apiRequest } from '@/lib/api';
 import { Event, EventsResponse } from '@/types';
 import EventCard from '@/components/EventCard';
-import { Search, Filter, ArrowUpDown, X, Plus, Compass } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, X, Plus, Compass, Calendar, Clock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 const CATEGORIES = [
@@ -19,12 +19,20 @@ const CATEGORIES = [
   'other',
 ];
 
-export default function EventsPage() {
+function EventsContent() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState('-date');
+  const [sort, setSort] = useState('date');
+  const [timeframe, setTimeframe] = useState<'upcoming' | 'past'>('upcoming');
+  const [todayTimestamp, setTodayTimestamp] = useState<number>(0);
+
+  useEffect(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    setTodayTimestamp(d.getTime());
+  }, []);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -33,6 +41,9 @@ export default function EventsPage() {
         const queryParams = new URLSearchParams();
         if (category !== 'all') queryParams.append('category', category);
         queryParams.append('sort', sort);
+        if (timeframe === 'past') {
+          queryParams.append('timeframe', 'past');
+        }
 
         const data = await apiRequest<EventsResponse>(`/events?${queryParams.toString()}`);
         setEvents(data.events || []);
@@ -44,13 +55,21 @@ export default function EventsPage() {
     };
 
     loadEvents();
-  }, [category, sort]);
+  }, [category, sort, timeframe]);
 
-  const filteredEvents = events.filter((e) =>
-    e.title.toLowerCase().includes(search.toLowerCase()) ||
-    e.description.toLowerCase().includes(search.toLowerCase()) ||
-    e.location.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredEvents = events.filter((e) => {
+    const eventTime = new Date(e.date).getTime();
+    if (todayTimestamp > 0) {
+      if (timeframe === 'upcoming' && eventTime < todayTimestamp) return false;
+      if (timeframe === 'past' && eventTime >= todayTimestamp) return false;
+    }
+
+    return (
+      e.title.toLowerCase().includes(search.toLowerCase()) ||
+      e.description.toLowerCase().includes(search.toLowerCase()) ||
+      e.location.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
@@ -77,6 +96,35 @@ export default function EventsPage() {
           <Plus className="w-4 h-4" />
           <span>Host Event</span>
         </Link>
+      </div>
+
+      {/* Timeframe Filter (Upcoming vs Past) */}
+      <div className="flex items-center gap-2 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-3">
+        <button
+          type="button"
+          onClick={() => setTimeframe('upcoming')}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+            timeframe === 'upcoming'
+              ? 'btn-primary-glow text-white shadow-sm'
+              : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+          }`}
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          <span>Upcoming (Today & Next)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setTimeframe('past')}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+            timeframe === 'past'
+              ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-sm'
+              : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+          }`}
+        >
+          <Clock className="w-3.5 h-3.5" />
+          <span>Past Events</span>
+        </button>
       </div>
 
       {/* Filter and Search Bar */}
@@ -126,8 +174,8 @@ export default function EventsPage() {
               onChange={(e) => setSort(e.target.value)}
               className="w-full py-2.5 px-3 text-xs font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer truncate"
             >
+              <option value="date">Upcoming Date (Soonest first)</option>
               <option value="-date">Latest Created</option>
-              <option value="date">Upcoming Date</option>
             </select>
           </div>
         </div>
@@ -172,5 +220,27 @@ export default function EventsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+          <div className="h-10 w-48 bg-zinc-200 dark:bg-zinc-800 rounded-2xl animate-pulse" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="h-72 rounded-3xl bg-zinc-100 dark:bg-zinc-900 animate-pulse border border-zinc-200/60 dark:border-zinc-800/60"
+              />
+            ))}
+          </div>
+        </div>
+      }
+    >
+      <EventsContent />
+    </Suspense>
   );
 }

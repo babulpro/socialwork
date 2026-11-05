@@ -51,6 +51,11 @@ export default function CreateEventPage() {
   const [category, setCategory] = useState<Event['category']>('tech');
   const [maxAttendees, setMaxAttendees] = useState<number | ''>('');
   const [isPublic, setIsPublic] = useState(true);
+  const [todayStr, setTodayStr] = useState('');
+
+  useEffect(() => {
+    setTodayStr(new Date().toISOString().split('T')[0]);
+  }, []);
 
   // Cover image states
   const [coverImage, setCoverImage] = useState('');
@@ -171,10 +176,22 @@ export default function CreateEventPage() {
       return;
     }
 
+    const selectedDateTime = new Date(`${date}T${time || '00:00'}:00`);
+    if (isNaN(selectedDateTime.getTime())) {
+      setError('Please provide a valid event date and time.');
+      return;
+    }
+
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    if (selectedDateTime < fiveMinutesAgo) {
+      setError('Event date and time cannot be in the past. Please select today or a future date and time.');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
-      const combinedDateTime = new Date(`${date}T${time || '00:00'}:00`).toISOString();
+      const combinedDateTime = selectedDateTime.toISOString();
 
       const payload = {
         title,
@@ -208,7 +225,7 @@ export default function CreateEventPage() {
   };
 
   // Construct mock event for live preview
-  const previewDate = date ? new Date(`${date}T${time || '18:00'}:00`).toISOString() : new Date().toISOString();
+  const previewDate = date ? `${date}T${time || '18:00'}:00.000Z` : '';
   const previewEvent: Event = {
     _id: 'preview',
     title: title || 'Your Event Title Will Appear Here',
@@ -229,8 +246,8 @@ export default function CreateEventPage() {
       email: user.email || '',
       avatar: user.image || '',
     },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: '',
+    updatedAt: '',
   };
 
   return (
@@ -467,8 +484,17 @@ export default function CreateEventPage() {
                 <input
                   type="date"
                   required
+                  min={todayStr || undefined}
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val && todayStr && val < todayStr) {
+                      setError('Event date cannot be in the past. Please choose today or a future date.');
+                      return;
+                    }
+                    setError(null);
+                    setDate(val);
+                  }}
                   className="w-full pl-10 pr-4 py-3 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-zinc-950/80 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
                 />
               </div>
